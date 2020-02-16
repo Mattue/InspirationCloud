@@ -6,16 +6,47 @@
 
 #include <Ardugram.h>
 
+// extern "C" {
+//   #include "user_interface.h"
+//   #include "wpa2_enterprise.h"
+// }
+
 String ssid = "From_Siberia_With_Love";                         // REPLACE mySSID WITH YOUR WIFI SSID
 String pass = "qwerty1480";                                     // REPLACE myPassword YOUR WIFI PASSWORD, IF ANY
 String token = "571169334:AAEr3G6dtKkEtXMBRusBd9yAklLYw2QhgzY"; // REPLACE myToken WITH YOUR TELEGRAM BOT TOKEN
 
 Ardugram myBot(token);
 
+//https://github.com/esp8266/Arduino/issues/1032#issuecomment-285314332
+// // SSID to connect to
+// static const char* ssid = "MY_SSID";
+// // Username for authentification
+// static const char* username = "user1";
+// // Password for authentification
+// static const char* password = "secret";
+
 void setup()
 {
   // initialize the Serial
   Serial.begin(74880);
+
+  // wifi_set_opmode(STATION_MODE);
+
+  // struct station_config wifi_config;
+
+  // memset(&wifi_config, 0, sizeof(wifi_config));
+  // strcpy((char*)wifi_config.ssid, ssid);
+
+  // wifi_station_set_config(&wifi_config);
+
+  // wifi_station_clear_cert_key();
+  // wifi_station_clear_enterprise_ca_cert();
+  
+  // wifi_station_set_wpa2_enterprise_auth(1);
+  // wifi_station_set_enterprise_username((uint8*)username, strlen(username));
+  // wifi_station_set_enterprise_password((uint8*)password, strlen(password));
+
+  // wifi_station_connect();
 
   // connect the ESP8266 to the desired access point
   Serial.print("Connecting to WiFi ");

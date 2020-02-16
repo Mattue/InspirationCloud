@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "*.h": "cpp",
-        "functional": "c",
-        "istream": "c"
-    }
-}
