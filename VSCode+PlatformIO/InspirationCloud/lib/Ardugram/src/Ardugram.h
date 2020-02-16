@@ -10,14 +10,37 @@
 
 #include "ArdugramDataStructures/SendMessageRequest.h"
 
+#ifndef CONFIG_JSON_SIZE
 #define CONFIG_JSON_SIZE 200 //Size json config ----
+#endif
+
+#ifndef DEBUG_MODE
 #define DEBUG_MODE 1 // enable/disable debug mode. Pring debug data to serial port
+#endif
+
+#ifndef USE_HTTPS
 #define USE_HTTPS 0 // enable/disable https/http connection. For HTTPS fingerprint must be provided
-#define TELEGRAM_API_URI /telegram-api/bot
+#endif
+
+#ifndef TELEGRAM_API_URI
+#define TELEGRAM_API_URI "/telegram-api/bot"
+#endif
+
+#ifndef TELEGRAM_URL
+#define TELEGRAM_URL "http://176.223.142.19" //IP of VPS nginx proxy. In soviet Russia working like this. Thiking of socks5 proxy...
+#endif
+
+#ifndef TELEGRAM_IP
+#define TELEGRAM_IP "176.223.142.19" //IP of VPS nginx proxy. In soviet Russia working like this. Thiking of socks5 proxy...
+#endif
+
+#ifndef TELEGRAM_PORT
+#define TELEGRAM_PORT 80
+#endif
 
 class Ardugram
 {
-    using JsonDocument = StaticJsonDocument<200>;
+    using JsonDocument = StaticJsonDocument<CONFIG_JSON_SIZE>;
 
 public:
     // default constructor

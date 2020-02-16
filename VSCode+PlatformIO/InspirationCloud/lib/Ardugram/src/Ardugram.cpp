@@ -1,12 +1,8 @@
 #include "Ardugram.h"
 
-//clean includes
 #include <WiFiClientSecure.h>
 #include <ESP8266HTTPClient.h>
 #include "Utils.h"
-
-#define TELEGRAM_IP "176.223.142.19" //IP of VPS nginx proxy. In soviet Russia working like this. Thiking of socks5 proxy...
-#define TELEGRAM_PORT 80
 
 inline void Ardugram::serialLog(String message)
 {
