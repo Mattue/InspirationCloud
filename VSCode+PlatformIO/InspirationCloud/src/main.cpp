@@ -1,10 +1,20 @@
 #include <Arduino.h>
+
+#define FASTLED_ESP8266_RAW_PIN_ORDER
+
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <ESP8266mDNS.h>
 #include <WiFiUdp.h>
+#include <UniversalTelegramBot.h>
+#include <ArduinoJson.h>
+#include <ArduinoOTA.h>
+#include <FastLED.h>
 
-#include <Ardugram.h>
+#define NUM_LEDS 73
+#define PIN6 12
+#define PIN7 13
+#define PIN8 15
 
 // extern "C" {
 //   #include "user_interface.h"
@@ -15,7 +25,8 @@ String ssid = "From_Siberia_With_Love";                         // REPLACE mySSI
 String pass = "qwerty1480";                                     // REPLACE myPassword YOUR WIFI PASSWORD, IF ANY
 String token = "571169334:AAEr3G6dtKkEtXMBRusBd9yAklLYw2QhgzY"; // REPLACE myToken WITH YOUR TELEGRAM BOT TOKEN
 
-Ardugram myBot(token);
+WiFiClient secured_client;
+UniversalTelegramBot bot(token, secured_client);
 
 //https://github.com/esp8266/Arduino/issues/1032#issuecomment-285314332
 // // SSID to connect to
@@ -25,10 +36,45 @@ Ardugram myBot(token);
 // // Password for authentification
 // static const char* password = "secret";
 
+int Bot_mtbs = 1000; // mean time between scan messages
+long Bot_lasttime;   // last time messages' scan has been done
+
+CRGB leds[NUM_LEDS];
+
+void handleNewMessages(int numNewMessages)
+{
+  Serial.println("handleNewMessages");
+  Serial.println(String(numNewMessages));
+
+  for (int i = 0; i < numNewMessages; i++)
+  {
+    String chat_id = String(bot.messages[i].chat_id);
+    String text = bot.messages[i].text;
+
+    String from_name = bot.messages[i].from_name;
+    if (from_name == "")
+      from_name = "Guest";
+
+    bot.sendMessage(chat_id, "Hello there: " + text, "");
+  }
+}
+
 void setup()
 {
   // initialize the Serial
-  Serial.begin(74880);
+  Serial.begin(115200);
+
+  //LED strips init
+  FastLED.addLeds<WS2812B, PIN6, GRB>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
+  FastLED.addLeds<WS2812B, PIN7, GRB>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
+  FastLED.addLeds<WS2812B, PIN8, GRB>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
+
+  for (int i = 0; i < NUM_LEDS; i++)
+  {
+    leds[i] = CRGB::Black;
+  }
+
+  FastLED.setBrightness(70);
 
   // wifi_set_opmode(STATION_MODE);
 
@@ -41,7 +87,7 @@ void setup()
 
   // wifi_station_clear_cert_key();
   // wifi_station_clear_enterprise_ca_cert();
-  
+
   // wifi_station_set_wpa2_enterprise_auth(1);
   // wifi_station_set_enterprise_username((uint8*)username, strlen(username));
   // wifi_station_set_enterprise_password((uint8*)password, strlen(password));
@@ -55,48 +101,78 @@ void setup()
   WiFi.mode(WIFI_STA);
   delay(500);
   WiFi.begin(ssid, pass);
-	delay(500);
+  delay(500);
 
-  if (WiFi.waitForConnectResult() == WL_CONNECTED) {
+  if (WiFi.waitForConnectResult() == WL_CONNECTED)
+  {
     IPAddress ip = WiFi.localIP();
-		Serial.print("Connected to WiFi. IP address: ");
+    Serial.print("Connected to WiFi. IP address: ");
     Serial.println(ip);
-  } else {
+  }
+  else
+  {
     Serial.println("Failed to connect to WiFi. Resetting ESP");
     delay(5000);
     ESP.restart();
   }
 
-  // myBot.useDNS(false);
+  //Wireles firmare upload init
+  ArduinoOTA.onStart([]() {
+    Serial.println("Start"); //  "Начало OTA-апдейта"
 
-  // // set the telegram bot token
-  // myBot.setTelegramToken(token);
+    for (int i = 0; i < NUM_LEDS; i++)
+    {
+      leds[i] = CRGB::Black;
+    }
 
-  // // check if all things are ok
-  // if (myBot.testConnection())
-  //   Serial.println("\ntestConnection OK");
-  // else
-  //   Serial.println("\ntestConnection NOK");
+    FastLED.show();
+  });
+  ArduinoOTA.onEnd([]() {
+    Serial.println("\nEnd"); //  "Завершение OTA-апдейта"
+  });
+  ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
+    Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+  });
+  ArduinoOTA.onError([](ota_error_t error) {
+    Serial.printf("Error[%u]: ", error);
+    if (error == OTA_AUTH_ERROR)
+      Serial.println("Auth Failed");
+    //  "Ошибка при аутентификации"
+    else if (error == OTA_BEGIN_ERROR)
+      Serial.println("Begin Failed");
+    //  "Ошибка при начале OTA-апдейта"
+    else if (error == OTA_CONNECT_ERROR)
+      Serial.println("Connect Failed");
+    //  "Ошибка при подключении"
+    else if (error == OTA_RECEIVE_ERROR)
+      Serial.println("Receive Failed");
+    //  "Ошибка при получении данных"
+    else if (error == OTA_END_ERROR)
+      Serial.println("End Failed");
+    //  "Ошибка при завершении OTA-апдейта"
+  });
+  ArduinoOTA.begin();
+
+  pinMode(LED_BUILTIN, OUTPUT);
 }
 
 void loop()
 {
-  // // a variable to store telegram message data
-  // TBMessage msg;
 
-  // // if there is an incoming message...
-  // if (myBot.getNewMessage(msg))
-  //   // ...forward it to the sender
-  //   myBot.sendMessage(msg.sender.id, msg.text);
+  ArduinoOTA.handle();
 
-  // // wait 500 milliseconds
-  // delay(500);
+  if (millis() > Bot_lasttime + Bot_mtbs)
+  {
+    Serial.println("Cheking for updates");
+    int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
 
-  String output;
-  serializeJson(myBot.getMe(), output);
+    while (numNewMessages)
+    {
+      Serial.println("got response");
+      handleNewMessages(numNewMessages);
+      numNewMessages = bot.getUpdates(bot.last_message_received + 1);
+    }
 
-  //myBot.getMe();
-
-  Serial.println(output);
-  delay(3000);
+    Bot_lasttime = millis();
+  }
 }
