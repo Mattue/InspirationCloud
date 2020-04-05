@@ -1,9 +1,5 @@
 #include "Ardugram.h"
 
-#include <WiFiClientSecure.h>
-#include <ESP8266HTTPClient.h>
-#include "Utils.h"
-
 inline void Ardugram::serialLog(String message)
 {
 #if DEBUG_MODE > 0
@@ -23,66 +19,102 @@ Ardugram::~Ardugram()
 Ardugram::JsonDocument Ardugram::getMe()
 {
     return callMethod("GET", "getMe", "");
-    // JsonDocument jsonDoc;
-    // JsonObject root = jsonDoc.to<JsonObject>();
-
-    // root["sensor"] = "gps";
-    // root["time"] = 1351824120;
-
-    // JsonArray data = root.createNestedArray("data");
-    // data.add(48.756080);
-    // data.add(2.302038);
-
-    // return jsonDoc;
 }
 
 Ardugram::JsonDocument Ardugram::callMethod(String httpMethod, String apiMethodName, String queryParams)
 {
-#if USE_HTTPS == 0 //work through http
-    WiFiClient telegramWiFiClient;
-    HTTPClient telegramHttpClient;
-#else //work through https
-    BearSSL::WiFiClientSecure telegramServer;
-    telegramServer.setFingerprint(httpsFingerprint);
-#endif
 
+    String URL = apiMethodName + (String) " /bot" + botApiToken + (String) "/" + apiMethodName;
+    WiFiClientSecure telegramWiFiClient;
+
+    HTTPClient telegramHttpClient;
     JsonDocument jsonDoc;
 
-    //String URL = httpMethod + " /telegram-api/bot" + botApiToken + (String) "/" + apiMethodName + (String) "?" + queryParams;
+#if USE_SOCKS5 == 1 //work through socks5 proxy
 
-    String URL = (String) "http://" + TELEGRAM_IP + (String) "/telegram-api/bot" + botApiToken + (String) "/getMe";
-    //URL = "http://176.223.142.19/telegram-api/bot571169334:AAEr3G6dtKkEtXMBRusBd9yAklLYw2QhgzY/getMe";
+    IPAddress proxyIP(176, 223, 142, 19);
+    u_int proxyPort = 1080;
+    // Socks5Proxy proxy(proxyIP, proxyPort, telegramWiFiClient);
 
-    if (telegramHttpClient.begin(telegramWiFiClient, URL))
+    //URL = (String) "api.telegram.org/telegram-api/bot" + botApiToken + (String) "/getMe";
+#else // basic http/https
+// #if USE_HTTPS == 0 //work through http
+//     HTTPClient telegramHttpClient;
+// #else              //work through https
+//     BearSSL::WiFiClientSecure telegramServer;
+//     telegramServer.setFingerprint(httpsFingerprint);
+//     telegramServer
+// #endif
+#endif
+
+    serialLog("\nConnecting to proxy using host name\n");
+    if (telegramWiFiClient.connect("0x050x010x000x03proxy_user:qwerty1480@176.223.142.19", 1080))
     {
-        int httpCode = telegramHttpClient.GET();
-
-        if (httpCode > 0)
-        {
-            Serial.printf("[HTTP] GET... code: %d\n", httpCode);
-
-            // file found at server
-            if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY)
-            {
-                deserializeJson(jsonDoc, telegramHttpClient.getString());
-            }
-            serialLog("OK\n");
-        }
-        else
-        {
-            //Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
-            serialLog("NOT OK\n");
-        }
-        telegramHttpClient.end();
+        serialLog("\nConnected using host name\n");
     }
     else
     {
-        //Serial.printf("[HTTP} Unable to connect\n");
+        serialLog("In else");
     }
+
+    telegramWiFiClient.println("GET 149.154.167.198/bot123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11/getMe433");
+    Serial.println(telegramWiFiClient.readString());
+
+// serialLog("\nConnecting using host name\n");
+//     uint16_t port = 443;
+//     if (proxy.connect("api.telegram.org", port))
+//     {
+//         serialLog("\nConnected using host name\n");
+//     }
+//     else
+//     {
+//         serialLog("\nFailed to connect using host name\n");
+//         serialLog("\nConnecting to connect using IP address\n");
+//         // no way, try to connect with fixed IP
+//         IPAddress telegramServerIP;
+//         telegramServerIP.fromString("149.154.167.198");
+//         if (proxy.connect(telegramServerIP, port))
+//         {
+//             serialLog("\nConnected using fixed IP\n");
+//         }
+//         else
+//         {
+//             serialLog("\nUnable to connect to Telegram server\n");
+//         }
+//     }
+
+    // telegramHttpClient
+
+    // if (telegramHttpClient.begin(telegramWiFiClient, URL))
+    // {
+    //     int httpCode = telegramHttpClient.GET();
+
+    //     if (httpCode > 0)
+    //     {
+    //         Serial.printf("[HTTP] GET... code: %d\n", httpCode);
+
+    //         // file found at server
+    //         if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY)
+    //         {
+    //             deserializeJson(jsonDoc, telegramHttpClient.getString());
+    //         }
+    //         serialLog("OK\n");
+    //     }
+    //     else
+    //     {
+    //         Serial.printf("[HTTP] GET... failed, error: %s\n", telegramHttpClient.errorToString(httpCode).c_str());
+    //         serialLog("NOT OK\n");
+    //     }
+    //     telegramHttpClient.end();
+    // }
+    // else
+    // {
+    //     Serial.printf("[HTTP] Unable to connect\n");
+    // }
 
 #if false //CTBOT_CHECK_JSON == 0 //check JSON ???
     //return(telegramServer.readString());
 #else
-    return jsonDoc;
+        return jsonDoc;
 #endif
 }

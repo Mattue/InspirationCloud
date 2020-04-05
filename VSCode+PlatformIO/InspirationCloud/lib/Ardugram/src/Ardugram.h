@@ -7,6 +7,17 @@
 //clean includes
 #include <Arduino.h>
 #include <ArduinoJson.h>
+#include <Socks5Proxy.h>
+
+//#ifndef UNSECURE_CLIENT
+#include <ESP8266WiFi.h>
+#include <WiFiClientSecure.h> 
+#include <ESP8266WebServer.h>
+#include <ESP8266HTTPClient.h>
+//#define UNSECURE_CLIENT WiFiClient
+//#endif
+
+#include "Utils.h"
 
 #include "ArdugramDataStructures/SendMessageRequest.h"
 
@@ -20,6 +31,10 @@
 
 #ifndef USE_HTTPS
 #define USE_HTTPS 0 // enable/disable https/http connection. For HTTPS fingerprint must be provided
+#endif
+
+#ifndef USE_SOCKS5
+#define USE_SOCKS5 1 //enable/disable socks5 proxy
 #endif
 
 #ifndef TELEGRAM_API_URI
