@@ -25,7 +25,7 @@ String ssid = "From_Siberia_With_Love";                         // REPLACE mySSI
 String pass = "qwerty1480";                                     // REPLACE myPassword YOUR WIFI PASSWORD, IF ANY
 String token = "571169334:AAEr3G6dtKkEtXMBRusBd9yAklLYw2QhgzY"; // REPLACE myToken WITH YOUR TELEGRAM BOT TOKEN
 
-WiFiClient secured_client;
+WiFiClientSecure secured_client;
 UniversalTelegramBot bot(token, secured_client);
 
 //https://github.com/esp8266/Arduino/issues/1032#issuecomment-285314332
@@ -36,8 +36,8 @@ UniversalTelegramBot bot(token, secured_client);
 // // Password for authentification
 // static const char* password = "secret";
 
-int Bot_mtbs = 1000; // mean time between scan messages
-long Bot_lasttime;   // last time messages' scan has been done
+const unsigned long BOT_MTBS = 1000; // mean time between scan messages
+unsigned long bot_lasttime;          // last time messages' scan has been done
 
 CRGB leds[NUM_LEDS];
 
@@ -56,6 +56,16 @@ void handleNewMessages(int numNewMessages)
       from_name = "Guest";
 
     bot.sendMessage(chat_id, "Hello there: " + text, "");
+
+    if (text == "/start")
+    {
+      String welcome = "Welcome to Universal Arduino Telegram Bot library, " + from_name + ".\n";
+      welcome += "This is Flash Led Bot example.\n\n";
+      welcome += "/ledon : to switch the Led ON\n";
+      welcome += "/ledoff : to switch the Led OFF\n";
+      welcome += "/status : Returns current status of LED\n";
+      bot.sendMessage(chat_id, welcome, "Markdown");
+    }
   }
 }
 
@@ -154,6 +164,8 @@ void setup()
   ArduinoOTA.begin();
 
   pinMode(LED_BUILTIN, OUTPUT);
+
+  secured_client.setInsecure();
 }
 
 void loop()
@@ -161,7 +173,7 @@ void loop()
 
   ArduinoOTA.handle();
 
-  if (millis() > Bot_lasttime + Bot_mtbs)
+  if (millis() > bot_lasttime + BOT_MTBS)
   {
     Serial.println("Cheking for updates");
     int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
@@ -173,6 +185,6 @@ void loop()
       numNewMessages = bot.getUpdates(bot.last_message_received + 1);
     }
 
-    Bot_lasttime = millis();
+    bot_lasttime = millis();
   }
 }

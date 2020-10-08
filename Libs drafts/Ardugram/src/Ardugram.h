@@ -34,19 +34,22 @@
 #endif
 
 #ifndef USE_SOCKS5
-#define USE_SOCKS5 1 //enable/disable socks5 proxy
+#define USE_SOCKS5 0 //enable/disable socks5 proxy
 #endif
 
 #ifndef TELEGRAM_API_URI
-#define TELEGRAM_API_URI "/telegram-api/bot"
+// #define TELEGRAM_API_URI "/telegram-api/bot"
+#define TELEGRAM_API_URI "/bot"
 #endif
 
 #ifndef TELEGRAM_URL
-#define TELEGRAM_URL "http://176.223.142.19" //IP of VPS nginx proxy. In soviet Russia working like this. Thiking of socks5 proxy...
+//#define TELEGRAM_URL "http://176.223.142.19" //IP of VPS nginx proxy. In soviet Russia working like this. Thiking of socks5 proxy...
+#define TELEGRAM_URL "http://api.telegram.org"
 #endif
 
 #ifndef TELEGRAM_IP
-#define TELEGRAM_IP "176.223.142.19" //IP of VPS nginx proxy. In soviet Russia working like this. Thiking of socks5 proxy...
+//#define TELEGRAM_IP "176.223.142.19" //IP of VPS nginx proxy. In soviet Russia working like this. Thiking of socks5 proxy...
+#define TELEGRAM_IP "149.154.167.220"
 #endif
 
 #ifndef TELEGRAM_PORT
@@ -85,7 +88,7 @@ public:
 private:
 
     String botApiToken; //telegram bot api token
-    uint8_t   httpsFingerprint[20]; //telegram api https fingerprint https://www.grc.com/fingerprints.htm
+    uint8_t httpsFingerprint[20]; //telegram api https fingerprint https://www.grc.com/fingerprints.htm
 
     // send data to the serial port. It work only if the CTBOT_DEBUG_MODE is enabled.
 	// message: the message to send
