@@ -11,6 +11,18 @@ MessageHandler::MessageHandler()
     cmdStart = cli.addCmd("/start");
     cmdStart.setDescription("Start communication with bot");
 
+    cmdHelp = cli.addCmd("/help");
+    cmdHelp.setDescription("Show help for this system");
+
+    cmdLed = cli.addCmd("/led");
+    cmdLed.setDescription("/led is for playing with LED in inspiration cloud.");
+    // cmdLed.addArg("blink");
+    cmdLed.addFlagArg("fill");
+    // cmdLed.addArg("rainbow");
+    cmdLed.addFlagArg(HELP_ARG);
+    // cmdLed.addArg("c/color");
+    // cmdLed.addArg("n/count");
+
     clientSecure.setInsecure();
 }
 
@@ -44,11 +56,35 @@ void MessageHandler::handleMessages()
         {
             Command c = cli.getCmd();
 
-            if (c == cmdStart)
+            int argNum = c.countArgs();
+
+#if DEBUG_MODE == 1
+            Serial.print("> ");
+            Serial.print(c.getName());
+            Serial.print(' ');
+
+            for (int i = 0; i < argNum; ++i)
             {
-                bot.sendMessage(chat_id, buildMenu(bot.messages[i]), "Markdown");
+                Argument arg = c.getArgument(i);
+                Serial.print(arg.toString());
+                Serial.print(' ');
+            }
+
+            Serial.println();
+#endif
+
+            if (c == cmdStart || c == cmdHelp)
+            {
+                bot.sendMessage(chat_id, buildMenu(bot.messages[i]), DEFAULT_PARSE_MODE);
                 //currentParsedMessage.root = "/start";
                 //currentParsedMessage.systemStatus = 0;
+            }
+            else if (c == cmdLed)
+            {
+                if (c.getArg(HELP_ARG).isSet() || argNum == 2)
+                {
+                    bot.sendMessage(chat_id, buildLedHelp(), DEFAULT_PARSE_MODE);
+                }
             }
             else
             {
@@ -81,4 +117,21 @@ String MessageHandler::buildMenu(telegramMessage currentMessage)
     welcome += "/status : Returns current status of inspiration cloud\n";
 
     return welcome;
+}
+
+String MessageHandler::buildLedHelp()
+{
+    String ledHelp = "/led is for playing with LED in inspiration cloud.\n";
+    ledHelp += "Usage:\n";
+    ledHelp += "/led [command] [option] [value]\n\n";
+    ledHelp += "Commands:\n";
+    ledHelp += "-blink   blink with specified color specified numbmer of times. Options: -color, -count\n";
+    ledHelp += "-fill   switch on LED with specified color. Options: -color\n";
+    ledHelp += "-rainbow switch on or off LED rainbow.\n";
+    ledHelp += "-help    show this help\n\n";
+    ledHelp += "Options:\n";
+    ledHelp += "-color  HEX, or text color value\n";
+    ledHelp += "-count  integer number\n";
+
+    return ledHelp;
 }

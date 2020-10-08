@@ -4,6 +4,10 @@
 #include <SimpleCLI.h>
 #include <LinkedList.h>
 
+#define DEFAULT_PARSE_MODE "Markdown"
+
+#define HELP_ARG "help"
+
 class MessageHandler
 {
 
@@ -13,8 +17,12 @@ private:
 
     SimpleCLI cli;
     Command cmdStart;
+    Command cmdHelp;
+    Command cmdLed;
+    Command cmdStatus;
 
     static String buildMenu(telegramMessage currentMessage);
+    static String buildLedHelp();
 
 public:
     MessageHandler();
