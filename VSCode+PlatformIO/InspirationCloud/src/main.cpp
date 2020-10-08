@@ -16,37 +16,59 @@
 #define PIN7 13
 #define PIN8 15
 
-#define DEBUG_MODE 1
+#ifndef DEBUG_MODE
+#define DEBUG_MODE 0
+#endif
 
-// extern "C" {
-//   #include "user_interface.h"
-//   #include "wpa2_enterprise.h"
-// }
+#ifndef SSID_MODE
+#define SSID_MODE 0
+#endif
 
-String ssid = "From_Siberia_With_Love";                         // REPLACE mySSID WITH YOUR WIFI SSID
-String pass = "qwerty1480";                                     // REPLACE myPassword YOUR WIFI PASSWORD, IF ANY
-String token = "571169334:AAEr3G6dtKkEtXMBRusBd9yAklLYw2QhgzY"; // REPLACE myToken WITH YOUR TELEGRAM BOT TOKEN
+#ifndef SSID_NAME
+#define SSID_NAME "From_Siberia_With_Love"
+#endif
 
-WiFiClientSecure secured_client;
-UniversalTelegramBot bot(token, secured_client);
+#ifndef SSID_PASSWORD
+#define SSID_PASSWORD "qwerty1480"
+#endif
+
+#ifndef BOT_TOKEN
+#define BOT_TOKEN "571169334:AAEr3G6dtKkEtXMBRusBd9yAklLYw2QhgzY"
+#endif
 
 //https://github.com/esp8266/Arduino/issues/1032#issuecomment-285314332
-// // SSID to connect to
-// static const char* ssid = "MY_SSID";
-// // Username for authentification
-// static const char* username = "user1";
-// // Password for authentification
-// static const char* password = "secret";
+#ifdef SSID_MODE
 
-const unsigned long BOT_MTBS = 1000; // mean time between scan messages
+#if SSID_MODE == 1
+extern "C"
+{
+#include "user_interface.h"
+#include "wpa2_enterprise.h"
+}
+
+#ifndef SSID_USERNAME
+#define SSID_USERNAME "user1"
+#endif
+
+#endif
+#endif
+
+#ifndef BOT_MTBS
+#define BOT_MTBS = 1000
+#endif
+
+WiFiClientSecure secured_client;
+UniversalTelegramBot bot(BOT_TOKEN, secured_client);
+
+//const unsigned long BOT_MTBS = 1000; // mean time between scan messages
 unsigned long bot_lasttime;          // last time messages' scan has been done
 
 CRGB leds[NUM_LEDS];
 
 void handleNewMessages(int numNewMessages)
 {
-#if DEBUG_MODE
-  Serial.println("handleNewMessages");
+#if DEBUG_MODE == 1
+  Serial.print("Number of messages to handle: ");
   Serial.println(String(numNewMessages));
 #endif
 
@@ -59,7 +81,7 @@ void handleNewMessages(int numNewMessages)
     if (from_name == "")
       from_name = "Guest";
 
-    //bot.sendMessage(chat_id, "Hello there: " + text, "");
+    bot.sendMessage(chat_id, "Hello there: " + text, "");
 
     if (text == "/start")
     {
@@ -89,51 +111,71 @@ void setup()
 
   FastLED.setBrightness(70);
 
-// wifi_set_opmode(STATION_MODE);
-
-// struct station_config wifi_config;
-
-// memset(&wifi_config, 0, sizeof(wifi_config));
-// strcpy((char*)wifi_config.ssid, ssid);
-
-// wifi_station_set_config(&wifi_config);
-
-// wifi_station_clear_cert_key();
-// wifi_station_clear_enterprise_ca_cert();
-
-// wifi_station_set_wpa2_enterprise_auth(1);
-// wifi_station_set_enterprise_username((uint8*)username, strlen(username));
-// wifi_station_set_enterprise_password((uint8*)password, strlen(password));
-
-// wifi_station_connect();
-
+#if SSID_MODE == 0
 // connect the ESP8266 to the desired access point
-#if DEBUG_MODE
-  Serial.print("Connecting to WiFi ");
-  Serial.println(ssid);
+#if DEBUG_MODE == 1
+  Serial.print("Connecting to WiFi: ");
+  Serial.println(SSID_NAME);
 #endif
 
   WiFi.mode(WIFI_STA);
   delay(500);
-  WiFi.begin(ssid, pass);
+  WiFi.begin(SSID_NAME, SSID_PASSWORD);
   delay(500);
 
   if (WiFi.waitForConnectResult() == WL_CONNECTED)
   {
+#if DEBUG_MODE == 1
     IPAddress ip = WiFi.localIP();
-#if DEBUG_MODE
     Serial.print("Connected to WiFi. IP address: ");
     Serial.println(ip);
 #endif
   }
   else
   {
-#if DEBUG_MODE
+#if DEBUG_MODE == 1
     Serial.println("Failed to connect to WiFi. Resetting ESP");
 #endif
     delay(5000);
     ESP.restart();
   }
+#else
+//connect the ESP8266 to wpa2-enterprise
+#if DEBUG_MODE == 1
+  Serial.print("Connecting to WiFi: ");
+  Serial.println(SSID_NAME);
+#endif
+  wifi_set_opmode(STATION_MODE);
+
+  struct station_config wifi_config;
+
+  memset(&wifi_config, 0, sizeof(wifi_config));
+  strcpy((char *)wifi_config.ssid, (char *)SSID_NAME);
+
+  wifi_station_set_config(&wifi_config);
+
+  wifi_station_clear_cert_key();
+  wifi_station_clear_enterprise_ca_cert();
+
+  wifi_station_set_wpa2_enterprise_auth(1);
+  wifi_station_set_enterprise_username((uint8 *)SSID_USERNAME, strlen(SSID_USERNAME));
+  wifi_station_set_enterprise_password((uint8 *)SSID_PASSWORD, strlen(SSID_PASSWORD));
+
+  wifi_station_connect();
+
+#if DEBUG_MODE == 1
+  // Wait for connection AND IP address from DHCP
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    delay(500);
+    Serial.print(".");
+  }
+
+  IPAddress ip = WiFi.localIP();
+  Serial.print("Connected to WiFi. IP address: ");
+  Serial.println(ip);
+#endif
+#endif
 
   //Wireles firmare upload init
   ArduinoOTA.onStart([]() {
@@ -172,7 +214,7 @@ void setup()
   });
   ArduinoOTA.begin();
 
-  pinMode(LED_BUILTIN, OUTPUT);
+  //pinMode(LED_BUILTIN, OUTPUT);
 
   secured_client.setInsecure();
 }
@@ -184,15 +226,15 @@ void loop()
 
   if (millis() > bot_lasttime + BOT_MTBS)
   {
-#if DEBUG_MODE
+#if DEBUG_MODE == 1
     Serial.println("Cheking for updates");
 #endif
 
     int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
 
-    while (numNewMessages)
+    for (int i = 0; i < numNewMessages; i++)
     {
-#if DEBUG_MODE
+#if DEBUG_MODE == 1
       Serial.println("got response");
 #endif
 
