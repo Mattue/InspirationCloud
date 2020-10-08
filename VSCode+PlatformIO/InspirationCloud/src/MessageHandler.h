@@ -7,6 +7,11 @@
 #define DEFAULT_PARSE_MODE "Markdown"
 
 #define HELP_ARG "help"
+#define FILL_ARG "fill"
+#define COLOR_ARG "color"
+#define BLINK_ARG "blink"
+#define RAINBOW_ARG "rainbow"
+#define COUNT_ARG "count"
 
 class MessageHandler
 {

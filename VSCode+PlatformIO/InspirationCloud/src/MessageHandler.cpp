@@ -8,6 +8,7 @@ returning statuses:
 
 MessageHandler::MessageHandler()
 {
+
     cmdStart = cli.addCmd("/start");
     cmdStart.setDescription("Start communication with bot");
 
@@ -16,12 +17,12 @@ MessageHandler::MessageHandler()
 
     cmdLed = cli.addCmd("/led");
     cmdLed.setDescription("/led is for playing with LED in inspiration cloud.");
-    // cmdLed.addArg("blink");
-    cmdLed.addFlagArg("fill");
-    // cmdLed.addArg("rainbow");
+    cmdLed.addFlagArg(BLINK_ARG);
+    cmdLed.addFlagArg(FILL_ARG);
+    cmdLed.addFlagArg(RAINBOW_ARG);
     cmdLed.addFlagArg(HELP_ARG);
-    // cmdLed.addArg("c/color");
-    // cmdLed.addArg("n/count");
+    cmdLed.addArg(COLOR_ARG, "42");
+    cmdLed.addArg(COUNT_ARG, 0);
 
     clientSecure.setInsecure();
 }
@@ -81,14 +82,26 @@ void MessageHandler::handleMessages()
             }
             else if (c == cmdLed)
             {
-                if (c.getArg(HELP_ARG).isSet() || argNum == 2)
+                if (c.getArg(HELP_ARG).isSet())
                 {
                     bot.sendMessage(chat_id, buildLedHelp(), DEFAULT_PARSE_MODE);
+                }
+                else if (c.getArg(FILL_ARG).isSet())
+                {
+                    Argument fillColor = c.getArg(COLOR_ARG);
+                    if (fillColor.getValue() != "42")
+                    {
+                        Serial.println("LED needs to be filled with " + fillColor.getValue() + " color");
+                    }
+                    else
+                    {
+                        bot.sendMessage(chat_id, "Please provide color to fill with -color option.\nExample: /led -fill -color RED", DEFAULT_PARSE_MODE);
+                    }
                 }
             }
             else
             {
-                bot.sendMessage(chat_id, "Unknown command.\nRun /start or /help to get list of valid commands.", "Markdown");
+                bot.sendMessage(chat_id, "Unknown command.\nRun /start or /help to get list of valid commands.", DEFAULT_PARSE_MODE);
                 //currentParsedMessage.root = "unknown";
                 //currentParsedMessage.systemStatus = 0;
             }
@@ -100,10 +113,12 @@ void MessageHandler::handleMessages()
 
             String errorMessage = "ERROR: " + cmdError.toString() + "\n";
 
-            if (cmdError.hasCommand())
-            {
-                errorMessage += "Did you mean \"" + cmdError.getCommand().toString() + "\"?\n";
-            }
+            // if (cmdError.hasCommand())
+            // {
+            //     errorMessage += "Did you mean \"" + cmdError.getCommand().toString() + "\"?\n";
+            // }
+
+            bot.sendMessage(chat_id, errorMessage, DEFAULT_PARSE_MODE);
         }
     }
 }
@@ -123,15 +138,15 @@ String MessageHandler::buildLedHelp()
 {
     String ledHelp = "/led is for playing with LED in inspiration cloud.\n";
     ledHelp += "Usage:\n";
-    ledHelp += "/led [command] [option] [value]\n\n";
+    ledHelp += "/led \\[command\\] \\[option\\] <value>\n\n";
     ledHelp += "Commands:\n";
     ledHelp += "-blink   blink with specified color specified numbmer of times. Options: -color, -count\n";
-    ledHelp += "-fill   switch on LED with specified color. Options: -color\n";
+    ledHelp += "-fill    switch on LED with specified color. Options: -color\n";
     ledHelp += "-rainbow switch on or off LED rainbow.\n";
     ledHelp += "-help    show this help\n\n";
     ledHelp += "Options:\n";
-    ledHelp += "-color  HEX, or text color value\n";
-    ledHelp += "-count  integer number\n";
+    ledHelp += "-color   HEX or text color value\n";
+    ledHelp += "-count   integer number\n";
 
     return ledHelp;
 }
