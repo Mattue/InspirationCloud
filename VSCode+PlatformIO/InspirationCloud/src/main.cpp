@@ -1,15 +1,15 @@
 #include <Arduino.h>
 
-#define FASTLED_ESP8266_RAW_PIN_ORDER
-
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <ESP8266mDNS.h>
 #include <WiFiUdp.h>
-#include <UniversalTelegramBot.h>
+//#include <UniversalTelegramBot.h>
 #include <ArduinoJson.h>
 #include <ArduinoOTA.h>
-#include <FastLED.h>
+#include <Led.h>
+#include <MessageHandler.h>
+// #include <FastLED.h>
 
 #define NUM_LEDS 73
 #define PIN6 12
@@ -57,59 +57,35 @@ extern "C"
 #define BOT_MTBS = 1000
 #endif
 
-WiFiClientSecure secured_client;
-UniversalTelegramBot bot(BOT_TOKEN, secured_client);
+//WiFiClientSecure secured_client;
+//UniversalTelegramBot bot(BOT_TOKEN, secured_client);
 
 //const unsigned long BOT_MTBS = 1000; // mean time between scan messages
-unsigned long bot_lasttime;          // last time messages' scan has been done
+unsigned long bot_lasttime; // last time messages' scan has been done
 
-CRGB leds[NUM_LEDS];
+// CRGB leds[NUM_LEDS];
+Led leds; //LED's controller
 
-void handleNewMessages(int numNewMessages)
-{
-#if DEBUG_MODE == 1
-  Serial.print("Number of messages to handle: ");
-  Serial.println(String(numNewMessages));
-#endif
+MessageHandler messageHandler;
 
-  for (int i = 0; i < numNewMessages; i++)
-  {
-    String chat_id = String(bot.messages[i].chat_id);
-    String text = bot.messages[i].text;
-
-    String from_name = bot.messages[i].from_name;
-    if (from_name == "")
-      from_name = "Guest";
-
-    bot.sendMessage(chat_id, "Hello there: " + text, "");
-
-    if (text == "/start")
-    {
-      String welcome = "Welcome to Inspiration cloud, " + from_name + ".\n";
-      welcome += "\n\n";
-      welcome += "/led : for led commands\n";
-      welcome += "/status : Returns current status of inspiration cloud\n";
-      bot.sendMessage(chat_id, welcome, "Markdown");
-    }
-  }
-}
+int system_status = 0; //idle. Full list find in MessageHandler.cpp
 
 void setup()
 {
   // initialize the Serial
   Serial.begin(115200);
 
-  //LED strips init
-  FastLED.addLeds<WS2812B, PIN6, GRB>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
-  FastLED.addLeds<WS2812B, PIN7, GRB>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
-  FastLED.addLeds<WS2812B, PIN8, GRB>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
+  // //LED strips init
+  // FastLED.addLeds<WS2812B, PIN6, GRB>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
+  // FastLED.addLeds<WS2812B, PIN7, GRB>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
+  // FastLED.addLeds<WS2812B, PIN8, GRB>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
 
-  for (int i = 0; i < NUM_LEDS; i++)
-  {
-    leds[i] = CRGB::Black;
-  }
+  // for (int i = 0; i < NUM_LEDS; i++)
+  // {
+  //   leds[i] = CRGB::Black;
+  // }
 
-  FastLED.setBrightness(70);
+  // FastLED.setBrightness(70);
 
 #if SSID_MODE == 0
 // connect the ESP8266 to the desired access point
@@ -181,12 +157,13 @@ void setup()
   ArduinoOTA.onStart([]() {
     Serial.println("Start of OTA update"); //  "Начало OTA-апдейта"
 
-    for (int i = 0; i < NUM_LEDS; i++)
-    {
-      leds[i] = CRGB::Black;
-    }
+    // for (int i = 0; i < NUM_LEDS; i++)
+    // {
+    //   leds[i] = CRGB::Black;
+    // }
 
-    FastLED.show();
+    // FastLED.show();
+    leds.switchOff();
   });
   ArduinoOTA.onEnd([]() {
     Serial.println("\nEnd of OTA update"); //  "Завершение OTA-апдейта"
@@ -215,8 +192,6 @@ void setup()
   ArduinoOTA.begin();
 
   //pinMode(LED_BUILTIN, OUTPUT);
-
-  secured_client.setInsecure();
 }
 
 void loop()
@@ -230,16 +205,19 @@ void loop()
     Serial.println("Cheking for updates");
 #endif
 
-    int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
+    messageHandler.handleMessages();
 
-    for (int i = 0; i < numNewMessages; i++)
-    {
-#if DEBUG_MODE == 1
-      Serial.println("got response");
-#endif
+    //int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
 
-      handleNewMessages(numNewMessages);
-    }
+    //     for (int i = 0; i < numNewMessages; i++)
+    //     {
+    // #if DEBUG_MODE == 1
+    //       Serial.println("got response");
+    // #endif
+
+    //       //handleNewMessages(numNewMessages);
+    //       messageHandler.handleMessages(numNewMessages);
+    //     }
 
     bot_lasttime = millis();
   }
