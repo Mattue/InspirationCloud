@@ -16,6 +16,8 @@
 #define PIN7 13
 #define PIN8 15
 
+#define DEBUG_MODE 1
+
 // extern "C" {
 //   #include "user_interface.h"
 //   #include "wpa2_enterprise.h"
@@ -43,8 +45,10 @@ CRGB leds[NUM_LEDS];
 
 void handleNewMessages(int numNewMessages)
 {
+#if DEBUG_MODE
   Serial.println("handleNewMessages");
   Serial.println(String(numNewMessages));
+#endif
 
   for (int i = 0; i < numNewMessages; i++)
   {
@@ -55,15 +59,14 @@ void handleNewMessages(int numNewMessages)
     if (from_name == "")
       from_name = "Guest";
 
-    bot.sendMessage(chat_id, "Hello there: " + text, "");
+    //bot.sendMessage(chat_id, "Hello there: " + text, "");
 
     if (text == "/start")
     {
-      String welcome = "Welcome to Universal Arduino Telegram Bot library, " + from_name + ".\n";
-      welcome += "This is Flash Led Bot example.\n\n";
-      welcome += "/ledon : to switch the Led ON\n";
-      welcome += "/ledoff : to switch the Led OFF\n";
-      welcome += "/status : Returns current status of LED\n";
+      String welcome = "Welcome to Inspiration cloud, " + from_name + ".\n";
+      welcome += "\n\n";
+      welcome += "/led : for led commands\n";
+      welcome += "/status : Returns current status of inspiration cloud\n";
       bot.sendMessage(chat_id, welcome, "Markdown");
     }
   }
@@ -86,27 +89,29 @@ void setup()
 
   FastLED.setBrightness(70);
 
-  // wifi_set_opmode(STATION_MODE);
+// wifi_set_opmode(STATION_MODE);
 
-  // struct station_config wifi_config;
+// struct station_config wifi_config;
 
-  // memset(&wifi_config, 0, sizeof(wifi_config));
-  // strcpy((char*)wifi_config.ssid, ssid);
+// memset(&wifi_config, 0, sizeof(wifi_config));
+// strcpy((char*)wifi_config.ssid, ssid);
 
-  // wifi_station_set_config(&wifi_config);
+// wifi_station_set_config(&wifi_config);
 
-  // wifi_station_clear_cert_key();
-  // wifi_station_clear_enterprise_ca_cert();
+// wifi_station_clear_cert_key();
+// wifi_station_clear_enterprise_ca_cert();
 
-  // wifi_station_set_wpa2_enterprise_auth(1);
-  // wifi_station_set_enterprise_username((uint8*)username, strlen(username));
-  // wifi_station_set_enterprise_password((uint8*)password, strlen(password));
+// wifi_station_set_wpa2_enterprise_auth(1);
+// wifi_station_set_enterprise_username((uint8*)username, strlen(username));
+// wifi_station_set_enterprise_password((uint8*)password, strlen(password));
 
-  // wifi_station_connect();
+// wifi_station_connect();
 
-  // connect the ESP8266 to the desired access point
+// connect the ESP8266 to the desired access point
+#if DEBUG_MODE
   Serial.print("Connecting to WiFi ");
   Serial.println(ssid);
+#endif
 
   WiFi.mode(WIFI_STA);
   delay(500);
@@ -116,19 +121,23 @@ void setup()
   if (WiFi.waitForConnectResult() == WL_CONNECTED)
   {
     IPAddress ip = WiFi.localIP();
+#if DEBUG_MODE
     Serial.print("Connected to WiFi. IP address: ");
     Serial.println(ip);
+#endif
   }
   else
   {
+#if DEBUG_MODE
     Serial.println("Failed to connect to WiFi. Resetting ESP");
+#endif
     delay(5000);
     ESP.restart();
   }
 
   //Wireles firmare upload init
   ArduinoOTA.onStart([]() {
-    Serial.println("Start"); //  "Начало OTA-апдейта"
+    Serial.println("Start of OTA update"); //  "Начало OTA-апдейта"
 
     for (int i = 0; i < NUM_LEDS; i++)
     {
@@ -138,7 +147,7 @@ void setup()
     FastLED.show();
   });
   ArduinoOTA.onEnd([]() {
-    Serial.println("\nEnd"); //  "Завершение OTA-апдейта"
+    Serial.println("\nEnd of OTA update"); //  "Завершение OTA-апдейта"
   });
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
     Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
@@ -175,14 +184,19 @@ void loop()
 
   if (millis() > bot_lasttime + BOT_MTBS)
   {
+#if DEBUG_MODE
     Serial.println("Cheking for updates");
+#endif
+
     int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
 
     while (numNewMessages)
     {
+#if DEBUG_MODE
       Serial.println("got response");
+#endif
+
       handleNewMessages(numNewMessages);
-      numNewMessages = bot.getUpdates(bot.last_message_received + 1);
     }
 
     bot_lasttime = millis();
