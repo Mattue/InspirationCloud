@@ -1,6 +1,9 @@
 #include "Led.h"
 
 Led::Led() {
+
+  FastLED.setMaxPowerInVoltsAndMilliamps(5,1500); 
+
     //LED strips init
   FastLED.addLeds<WS2812B, PIN1, GRB>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   FastLED.addLeds<WS2812B, PIN2, GRB>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);

@@ -206,54 +206,54 @@ void setup()
 
   pinMode(LED_BUILTIN, OUTPUT);
 
-  leds.color(hexToDec("#f5e042"));
+  // leds.color(hexToDec("#f5e042"));
 }
 
 LinkedList<ParsedMessage> *myMessages;
 
 void loop()
 {
-  // ArduinoOTA.handle();
+  ArduinoOTA.handle();
 
-//   if (millis() > bot_lasttime + BOT_MTBS)
-//   {
-// #if DEBUG_MODE == 1
-//     Serial.println("Checking for updates");
-// #endif
+  if (millis() > bot_lasttime + BOT_MTBS)
+  {
+#if DEBUG_MODE == 1
+    Serial.println("Checking for updates");
+#endif
 
-//     myMessages = messageHandler.handleMessages();
+    myMessages = messageHandler.handleMessages();
 
-// #if DEBUG_MODE == 1
-//     Serial.println("my messages size: " + String(myMessages->size()));
+#if DEBUG_MODE == 1
+    Serial.println("my messages size: " + String(myMessages->size()));
 
-//     for (int i = 0; i < myMessages->size(); i++)
-//     {
-//       Serial.print("! " + String(myMessages->get(i).root) + " ");
-//       Serial.print(String(myMessages->get(i).command) + " ");
-//       // Serial.print("(options size: "+ String(myMessages->get(i).options->size()) +")");
-//       // for (int j = 0; j < myMessages->get(i).options->size(); j++)
-//       // {
-//       //   Serial.print(myMessages->get(i).options->get(j).option + " " + myMessages->get(i).options->get(j).value);
-//       // }
-//       Serial.println();
-//     }
-// #endif
+    for (int i = 0; i < myMessages->size(); i++)
+    {
+      Serial.print("! " + String(myMessages->get(i).root) + " ");
+      Serial.print(String(myMessages->get(i).command) + " ");
+      // Serial.print("(options size: "+ String(myMessages->get(i).options->size()) +")");
+      // for (int j = 0; j < myMessages->get(i).options->size(); j++)
+      // {
+      //   Serial.print(myMessages->get(i).options->get(j).option + " " + myMessages->get(i).options->get(j).value);
+      // }
+      Serial.println();
+    }
+#endif
 
-//     bot_lasttime = millis();
-//     Serial.println("------------------------------");
-//     Serial.println("FreeRAM: " + String(ESP.getFreeHeap()));
-//   }
+    bot_lasttime = millis();
+    Serial.println("------------------------------");
+    Serial.println("FreeRAM: " + String(ESP.getFreeHeap()));
+  }
 
-//   if (myMessages->size() != 0)
-//   {
-//     for (int i = 0; i < myMessages->size(); i++) {
-//       if(myMessages->get(i).root.equals("/led")) {
-//         if(myMessages->get(i).command.equals(FILL_ARG)){
-//           leds.color(hexToDec(getNamedOptionValue(myMessages->get(i).options, COLOR_ARG)));
-//         }
-//       }
-//     }
-//   }
+  if (myMessages->size() != 0)
+  {
+    for (int i = 0; i < myMessages->size(); i++) {
+      if(myMessages->get(i).root.equals("/led")) {
+        if(myMessages->get(i).command.equals(FILL_ARG)){
+          leds.color(hexToDec(getNamedOptionValue(myMessages->get(i).options, COLOR_ARG)));
+        }
+      }
+    }
+  }
 
   // delete(myMessages);
   // if (myMessages->size() != 0) {
