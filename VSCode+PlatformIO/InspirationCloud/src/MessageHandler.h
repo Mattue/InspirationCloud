@@ -2,6 +2,7 @@
 #include <ESP8266WiFi.h>
 #include <UniversalTelegramBot.h>
 #include <SimpleCLI.h>
+#include <structures\ParsedMessage.h>
 #include <LinkedList.h>
 
 #define DEFAULT_PARSE_MODE "Markdown"
@@ -12,6 +13,7 @@
 #define BLINK_ARG "blink"
 #define RAINBOW_ARG "rainbow"
 #define COUNT_ARG "count"
+#define DEFAULT_OPTIONAL "-1"
 
 class MessageHandler
 {
@@ -31,5 +33,6 @@ private:
 
 public:
     MessageHandler();
-    void handleMessages();
+    LinkedList<ParsedMessage> * handleMessages();
+    // void handleMessages(LinkedList<int> * parsedMessages);
 };

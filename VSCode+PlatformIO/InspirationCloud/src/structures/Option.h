@@ -4,7 +4,7 @@
 
 #include <Arduino.h>
 
-typedef struct Option {
+struct Option {
     String option;
     String value;
 };

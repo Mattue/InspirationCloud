@@ -21,27 +21,40 @@ MessageHandler::MessageHandler()
     cmdLed.addFlagArg(FILL_ARG);
     cmdLed.addFlagArg(RAINBOW_ARG);
     cmdLed.addFlagArg(HELP_ARG);
-    cmdLed.addArg(COLOR_ARG, "42");
-    cmdLed.addArg(COUNT_ARG, 0);
+    cmdLed.addArg(COLOR_ARG, DEFAULT_OPTIONAL);
+    cmdLed.addArg(COUNT_ARG, DEFAULT_OPTIONAL);
 
     clientSecure.setInsecure();
 }
 
-void MessageHandler::handleMessages()
+LinkedList<ParsedMessage> *MessageHandler::handleMessages()
 {
 
     int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
 
-#if DEBUG_MODE == 1
-    Serial.print("Number of messages to handle: ");
-    Serial.println(String(numNewMessages));
-#endif
+    // #if DEBUG_MODE == 1
+    //     Serial.print("Number of messages to handle: ");
+    //     Serial.println(String(numNewMessages));
+    // #endif
+
+    LinkedList<ParsedMessage> *parsedMessages = new LinkedList<ParsedMessage>();
+    // parsedMessages->add(42);
+    //LinkedList<ParsedMessage> * parsedMessages = new LinkedList<ParsedMessage>();
+    // ParsedMessage * parsedMessage = new ParsedMessage();
+    // parsedMessage->root = "HOP HEY";
+    // parsedMessages->add(*parsedMessage);
+    // delete(parsedMessage);
+    //return parsedMessages;
 
     for (int i = 0; i < numNewMessages; i++)
     {
-#if DEBUG_MODE == 1
-        Serial.println("got response");
-#endif
+
+        // #if DEBUG_MODE == 1
+        //         Serial.println("got response");
+        // #endif
+
+        //         ParsedMessageAsClass *parsedMessage = new ParsedMessageAsClass();
+        ParsedMessage *parsedMessage = new ParsedMessage();
 
         String chat_id = String(bot.messages[i].chat_id);
         String text = bot.messages[i].text;
@@ -59,52 +72,72 @@ void MessageHandler::handleMessages()
 
             int argNum = c.countArgs();
 
-#if DEBUG_MODE == 1
-            Serial.print("> ");
-            Serial.print(c.getName());
-            Serial.print(' ');
+            // #if DEBUG_MODE == 1
+            //             Serial.print("> ");
+            //             Serial.print(c.getName());
+            //             Serial.print(' ');
 
-            for (int i = 0; i < argNum; ++i)
-            {
-                Argument arg = c.getArgument(i);
-                Serial.print(arg.toString());
-                Serial.print(' ');
-            }
+            //             for (int i = 0; i < argNum; ++i)
+            //             {
+            //                 Argument arg = c.getArgument(i);
+            //                 Serial.print(arg.toString());
+            //                 Serial.print(' ');
+            //             }
 
-            Serial.println();
-#endif
+            //             Serial.println();
+            // #endif
+
+            parsedMessage->root = c.getName();
 
             if (c == cmdStart || c == cmdHelp)
             {
                 bot.sendMessage(chat_id, buildMenu(bot.messages[i]), DEFAULT_PARSE_MODE);
-                //currentParsedMessage.root = "/start";
-                //currentParsedMessage.systemStatus = 0;
+                // parsedMessage.systemStatus = 0;
             }
             else if (c == cmdLed)
             {
-                if (c.getArg(HELP_ARG).isSet())
+                if (c.getArg(HELP_ARG).isSet()) // -help is called
                 {
                     bot.sendMessage(chat_id, buildLedHelp(), DEFAULT_PARSE_MODE);
+                    parsedMessage->command = HELP_ARG;
                 }
-                else if (c.getArg(FILL_ARG).isSet())
-                {
-                    Argument fillColor = c.getArg(COLOR_ARG);
-                    if (fillColor.getValue() != "42")
-                    {
-                        Serial.println("LED needs to be filled with " + fillColor.getValue() + " color");
-                    }
-                    else
-                    {
-                        bot.sendMessage(chat_id, "Please provide color to fill with -color option.\nExample: /led -fill -color RED", DEFAULT_PARSE_MODE);
-                    }
-                }
+                // else if (c.getArg(FILL_ARG).isSet()) // -fill is called
+                // {
+
+                //     parsedMessage->command = FILL_ARG;
+
+                //     Argument fillColor = c.getArg(COLOR_ARG);
+                //     if (fillColor.getValue() != DEFAULT_OPTIONAL)
+                //     {
+                //         Option colorOption;
+                //         colorOption.option = COLOR_ARG;
+                //         colorOption.value = fillColor.getValue();
+
+                //         parsedMessage->options = LinkedList<Option>();
+                //         parsedMessage->options.add(colorOption);
+
+                //         Serial.println("LED needs to be filled with " + fillColor.getValue() + " color");
+                //     }
+                //     else
+                //     {
+                //         bot.sendMessage(chat_id, "Please provide color to fill with -color option.\nExample: /led -fill -color RED", DEFAULT_PARSE_MODE);
+                //     }
+                // }
             }
             else
             {
                 bot.sendMessage(chat_id, "Unknown command.\nRun /start or /help to get list of valid commands.", DEFAULT_PARSE_MODE);
-                //currentParsedMessage.root = "unknown";
+                // parsedMessage->root = "unknown";
                 //currentParsedMessage.systemStatus = 0;
             }
+
+            Serial.println("Adding to List: " + parsedMessage->root);
+
+            parsedMessages->add(*parsedMessage);
+            delete (parsedMessage);
+            // parsedMessages.add(42);
+
+            Serial.println("parsedMessages list size: " + String(parsedMessages->size()));
         }
 
         if (cli.errored())
@@ -121,6 +154,15 @@ void MessageHandler::handleMessages()
             bot.sendMessage(chat_id, errorMessage, DEFAULT_PARSE_MODE);
         }
     }
+
+    //     if(parsedMessages->size() == 0) {
+    //         delete(parsedMessages);
+    //         //parsedMessages.~LinkedList();
+    //     }
+
+    Serial.println("parsedMessages list size before return: " + String(parsedMessages->size()));
+
+    return parsedMessages;
 }
 
 String MessageHandler::buildMenu(telegramMessage currentMessage)

@@ -4,13 +4,12 @@
 
 #include <Arduino.h>
 #include <UniversalTelegramBot.h>
-#include <LinkedList.h>
 #include <structures\Option.h>
 
-typedef struct ParsedMessage {
+struct ParsedMessage {
     String root;
     String command;
-    LinkedList<Option> options;
+    // LinkedList<Option> options;
     int systemStatus;
 };
 

@@ -9,7 +9,9 @@
 #include <ArduinoOTA.h>
 #include <Led.h>
 #include <MessageHandler.h>
+#include <structures\ParsedMessage.h>
 // #include <FastLED.h>
+#include <LinkedList.h>
 
 #define NUM_LEDS 73
 #define PIN6 12
@@ -56,9 +58,6 @@ extern "C"
 #ifndef BOT_MTBS
 #define BOT_MTBS = 1000
 #endif
-
-//WiFiClientSecure secured_client;
-//UniversalTelegramBot bot(BOT_TOKEN, secured_client);
 
 //const unsigned long BOT_MTBS = 1000; // mean time between scan messages
 unsigned long bot_lasttime; // last time messages' scan has been done
@@ -192,7 +191,17 @@ void setup()
   ArduinoOTA.begin();
 
   //pinMode(LED_BUILTIN, OUTPUT);
+
+  // LinkedList<int> myLinkedList;
+  // myLinkedList.add(42);
+  // int mySize = myLinkedList.size();
+  // int myValue = myLinkedList.get(0);
+  // Serial.println("My linked list size: " + String(mySize));
+  // Serial.println("My linked list 1st value: " + String(myValue));
 }
+
+LinkedList<ParsedMessage> *myMessages;
+// LinkedList<int> *myMessages;
 
 void loop()
 {
@@ -205,20 +214,35 @@ void loop()
     Serial.println("Cheking for updates");
 #endif
 
-    messageHandler.handleMessages();
+    // messageHandler.handleMessages(myMessages);
+    myMessages = messageHandler.handleMessages();
 
-    //int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
+    // if(myMessages) {
+    Serial.println("my messages size: " + String(myMessages->size()));
+    //Serial.println("my messages 1st value: " + String(myMessages->get(0).root));
+    // Serial.println("my messages 1st value: " + String(myMessages->get(0)));
+    // }
 
-    //     for (int i = 0; i < numNewMessages; i++)
-    //     {
-    // #if DEBUG_MODE == 1
-    //       Serial.println("got response");
-    // #endif
-
-    //       //handleNewMessages(numNewMessages);
-    //       messageHandler.handleMessages(numNewMessages);
-    //     }
+    for(int i = 0; i < myMessages->size(); i++) {
+      Serial.print("! " + myMessages->get(i).root + " ");
+    //   // Serial.print(myMessages.get(i).command + " ");
+    //   // for(int j = 0; j < myMessages.get(i).options.size(); j++) {
+    //   //   Serial.print(myMessages.get(i).options.get(j).option + " " + myMessages.get(i).options.get(j).value);
+    //   // }
+      Serial.println();
+    }
 
     bot_lasttime = millis();
   }
+
+  // delete(myMessages);
+  // if (myMessages->size() != 0) {
+  //   myMessages->~LinkedList();
+  // }
+  // myMessages->~LinkedList();
+  // myMessages->clear();
+  // delete(myMessages);
+  // Serial.println("FreeRAM: " + String(ESP.getFreeHeap()));
+  Serial.println("------------------------------");
+  delay(500);
 }
