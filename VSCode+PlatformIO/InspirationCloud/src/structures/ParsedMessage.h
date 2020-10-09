@@ -5,11 +5,12 @@
 #include <Arduino.h>
 #include <UniversalTelegramBot.h>
 #include <structures\Option.h>
+#include <LinkedList.h>
 
 struct ParsedMessage {
     String root;
     String command;
-    // LinkedList<Option> options;
+    LinkedList<Option> * options;
     int systemStatus;
 };
 

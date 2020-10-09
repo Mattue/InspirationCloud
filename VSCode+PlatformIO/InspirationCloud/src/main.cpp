@@ -4,13 +4,11 @@
 #include <ESP8266HTTPClient.h>
 #include <ESP8266mDNS.h>
 #include <WiFiUdp.h>
-//#include <UniversalTelegramBot.h>
 #include <ArduinoJson.h>
 #include <ArduinoOTA.h>
 #include <Led.h>
 #include <MessageHandler.h>
 #include <structures\ParsedMessage.h>
-// #include <FastLED.h>
 #include <LinkedList.h>
 
 #define NUM_LEDS 73
@@ -62,29 +60,45 @@ extern "C"
 //const unsigned long BOT_MTBS = 1000; // mean time between scan messages
 unsigned long bot_lasttime; // last time messages' scan has been done
 
-// CRGB leds[NUM_LEDS];
 Led leds; //LED's controller
 
 MessageHandler messageHandler;
 
 int system_status = 0; //idle. Full list find in MessageHandler.cpp
 
+String getNamedOptionValue(LinkedList<Option> * options, String optionName){
+  for(int i = 0; i < options->size(); i++) {
+    if(options->get(i).option.equals(optionName)){
+      return options->get(i).value;
+    }
+  }
+
+  return "";
+}
+
+unsigned int hexToDec(String hexString) {
+  
+  unsigned int decValue = 0;
+  int nextInt;
+  
+  for (int i = 0; i < hexString.length(); i++) {
+    
+    nextInt = int(hexString.charAt(i));
+    if (nextInt >= 48 && nextInt <= 57) nextInt = map(nextInt, 48, 57, 0, 9);
+    if (nextInt >= 65 && nextInt <= 70) nextInt = map(nextInt, 65, 70, 10, 15);
+    if (nextInt >= 97 && nextInt <= 102) nextInt = map(nextInt, 97, 102, 10, 15);
+    nextInt = constrain(nextInt, 0, 15);
+    
+    decValue = (decValue * 16) + nextInt;
+  }
+  
+  return decValue;
+}
+
 void setup()
 {
   // initialize the Serial
   Serial.begin(115200);
-
-  // //LED strips init
-  // FastLED.addLeds<WS2812B, PIN6, GRB>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
-  // FastLED.addLeds<WS2812B, PIN7, GRB>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
-  // FastLED.addLeds<WS2812B, PIN8, GRB>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
-
-  // for (int i = 0; i < NUM_LEDS; i++)
-  // {
-  //   leds[i] = CRGB::Black;
-  // }
-
-  // FastLED.setBrightness(70);
 
 #if SSID_MODE == 0
 // connect the ESP8266 to the desired access point
@@ -190,50 +204,56 @@ void setup()
   });
   ArduinoOTA.begin();
 
-  //pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
 
-  // LinkedList<int> myLinkedList;
-  // myLinkedList.add(42);
-  // int mySize = myLinkedList.size();
-  // int myValue = myLinkedList.get(0);
-  // Serial.println("My linked list size: " + String(mySize));
-  // Serial.println("My linked list 1st value: " + String(myValue));
+  leds.color(hexToDec("#f5e042"));
 }
 
 LinkedList<ParsedMessage> *myMessages;
-// LinkedList<int> *myMessages;
 
 void loop()
 {
+  // ArduinoOTA.handle();
 
-  ArduinoOTA.handle();
+//   if (millis() > bot_lasttime + BOT_MTBS)
+//   {
+// #if DEBUG_MODE == 1
+//     Serial.println("Checking for updates");
+// #endif
 
-  if (millis() > bot_lasttime + BOT_MTBS)
-  {
-#if DEBUG_MODE == 1
-    Serial.println("Cheking for updates");
-#endif
+//     myMessages = messageHandler.handleMessages();
 
-    // messageHandler.handleMessages(myMessages);
-    myMessages = messageHandler.handleMessages();
+// #if DEBUG_MODE == 1
+//     Serial.println("my messages size: " + String(myMessages->size()));
 
-    // if(myMessages) {
-    Serial.println("my messages size: " + String(myMessages->size()));
-    //Serial.println("my messages 1st value: " + String(myMessages->get(0).root));
-    // Serial.println("my messages 1st value: " + String(myMessages->get(0)));
-    // }
+//     for (int i = 0; i < myMessages->size(); i++)
+//     {
+//       Serial.print("! " + String(myMessages->get(i).root) + " ");
+//       Serial.print(String(myMessages->get(i).command) + " ");
+//       // Serial.print("(options size: "+ String(myMessages->get(i).options->size()) +")");
+//       // for (int j = 0; j < myMessages->get(i).options->size(); j++)
+//       // {
+//       //   Serial.print(myMessages->get(i).options->get(j).option + " " + myMessages->get(i).options->get(j).value);
+//       // }
+//       Serial.println();
+//     }
+// #endif
 
-    for(int i = 0; i < myMessages->size(); i++) {
-      Serial.print("! " + myMessages->get(i).root + " ");
-    //   // Serial.print(myMessages.get(i).command + " ");
-    //   // for(int j = 0; j < myMessages.get(i).options.size(); j++) {
-    //   //   Serial.print(myMessages.get(i).options.get(j).option + " " + myMessages.get(i).options.get(j).value);
-    //   // }
-      Serial.println();
-    }
+//     bot_lasttime = millis();
+//     Serial.println("------------------------------");
+//     Serial.println("FreeRAM: " + String(ESP.getFreeHeap()));
+//   }
 
-    bot_lasttime = millis();
-  }
+//   if (myMessages->size() != 0)
+//   {
+//     for (int i = 0; i < myMessages->size(); i++) {
+//       if(myMessages->get(i).root.equals("/led")) {
+//         if(myMessages->get(i).command.equals(FILL_ARG)){
+//           leds.color(hexToDec(getNamedOptionValue(myMessages->get(i).options, COLOR_ARG)));
+//         }
+//       }
+//     }
+//   }
 
   // delete(myMessages);
   // if (myMessages->size() != 0) {
@@ -242,7 +262,4 @@ void loop()
   // myMessages->~LinkedList();
   // myMessages->clear();
   // delete(myMessages);
-  // Serial.println("FreeRAM: " + String(ESP.getFreeHeap()));
-  Serial.println("------------------------------");
-  delay(500);
 }

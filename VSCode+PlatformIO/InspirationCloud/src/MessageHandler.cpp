@@ -8,6 +8,7 @@ returning statuses:
 
 MessageHandler::MessageHandler()
 {
+    bot.waitForResponse = 500;
 
     cmdStart = cli.addCmd("/start");
     cmdStart.setDescription("Start communication with bot");
@@ -27,33 +28,25 @@ MessageHandler::MessageHandler()
     clientSecure.setInsecure();
 }
 
-LinkedList<ParsedMessage> *MessageHandler::handleMessages()
+LinkedList<ParsedMessage> * MessageHandler::handleMessages()
 {
 
     int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
 
-    // #if DEBUG_MODE == 1
-    //     Serial.print("Number of messages to handle: ");
-    //     Serial.println(String(numNewMessages));
-    // #endif
+    #if DEBUG_MODE == 1
+        Serial.print("Number of messages to handle: ");
+        Serial.println(String(numNewMessages));
+    #endif
 
     LinkedList<ParsedMessage> *parsedMessages = new LinkedList<ParsedMessage>();
-    // parsedMessages->add(42);
-    //LinkedList<ParsedMessage> * parsedMessages = new LinkedList<ParsedMessage>();
-    // ParsedMessage * parsedMessage = new ParsedMessage();
-    // parsedMessage->root = "HOP HEY";
-    // parsedMessages->add(*parsedMessage);
-    // delete(parsedMessage);
-    //return parsedMessages;
 
     for (int i = 0; i < numNewMessages; i++)
     {
 
-        // #if DEBUG_MODE == 1
-        //         Serial.println("got response");
-        // #endif
+        #if DEBUG_MODE == 1
+                Serial.println("got response");
+        #endif
 
-        //         ParsedMessageAsClass *parsedMessage = new ParsedMessageAsClass();
         ParsedMessage *parsedMessage = new ParsedMessage();
 
         String chat_id = String(bot.messages[i].chat_id);
@@ -72,20 +65,20 @@ LinkedList<ParsedMessage> *MessageHandler::handleMessages()
 
             int argNum = c.countArgs();
 
-            // #if DEBUG_MODE == 1
-            //             Serial.print("> ");
-            //             Serial.print(c.getName());
-            //             Serial.print(' ');
+            #if DEBUG_MODE == 1
+                        Serial.print("> ");
+                        Serial.print(c.getName());
+                        Serial.print(' ');
 
-            //             for (int i = 0; i < argNum; ++i)
-            //             {
-            //                 Argument arg = c.getArgument(i);
-            //                 Serial.print(arg.toString());
-            //                 Serial.print(' ');
-            //             }
+                        for (int i = 0; i < argNum; ++i)
+                        {
+                            Argument arg = c.getArgument(i);
+                            Serial.print(arg.toString());
+                            Serial.print(' ');
+                        }
 
-            //             Serial.println();
-            // #endif
+                        Serial.println();
+            #endif
 
             parsedMessage->root = c.getName();
 
@@ -101,41 +94,40 @@ LinkedList<ParsedMessage> *MessageHandler::handleMessages()
                     bot.sendMessage(chat_id, buildLedHelp(), DEFAULT_PARSE_MODE);
                     parsedMessage->command = HELP_ARG;
                 }
-                // else if (c.getArg(FILL_ARG).isSet()) // -fill is called
-                // {
+                else if (c.getArg(FILL_ARG).isSet()) // -fill is called
+                {
 
-                //     parsedMessage->command = FILL_ARG;
+                    parsedMessage->command = FILL_ARG;
 
-                //     Argument fillColor = c.getArg(COLOR_ARG);
-                //     if (fillColor.getValue() != DEFAULT_OPTIONAL)
-                //     {
-                //         Option colorOption;
-                //         colorOption.option = COLOR_ARG;
-                //         colorOption.value = fillColor.getValue();
+                    Argument fillColor = c.getArg(COLOR_ARG);
+                    if (fillColor.getValue() != DEFAULT_OPTIONAL)
+                    {
+                        Option colorOption;
+                        colorOption.option = COLOR_ARG;
+                        colorOption.value = fillColor.getValue();
 
-                //         parsedMessage->options = LinkedList<Option>();
-                //         parsedMessage->options.add(colorOption);
+                        parsedMessage->options = new LinkedList<Option>();
+                        parsedMessage->options->add(colorOption);
 
-                //         Serial.println("LED needs to be filled with " + fillColor.getValue() + " color");
-                //     }
-                //     else
-                //     {
-                //         bot.sendMessage(chat_id, "Please provide color to fill with -color option.\nExample: /led -fill -color RED", DEFAULT_PARSE_MODE);
-                //     }
-                // }
+                        bot.sendMessage(chat_id, "LED will be filled with " + fillColor.getValue() + " color", DEFAULT_PARSE_MODE);
+                    }
+                    else
+                    {
+                        bot.sendMessage(chat_id, "Please provide color to fill with -color option.\nExample: /led -fill -color RED", DEFAULT_PARSE_MODE);
+                    }
+                }
             }
             else
             {
                 bot.sendMessage(chat_id, "Unknown command.\nRun /start or /help to get list of valid commands.", DEFAULT_PARSE_MODE);
-                // parsedMessage->root = "unknown";
-                //currentParsedMessage.systemStatus = 0;
+                parsedMessage->root = "unknown";
+                // currentParsedMessage.systemStatus = 0;
             }
 
             Serial.println("Adding to List: " + parsedMessage->root);
 
             parsedMessages->add(*parsedMessage);
             delete (parsedMessage);
-            // parsedMessages.add(42);
 
             Serial.println("parsedMessages list size: " + String(parsedMessages->size()));
         }
@@ -172,6 +164,7 @@ String MessageHandler::buildMenu(telegramMessage currentMessage)
     welcome += "\n\n";
     welcome += "/led : for led commands\n";
     welcome += "/status : Returns current status of inspiration cloud\n";
+    welcome += "/start : to show this menu";
 
     return welcome;
 }

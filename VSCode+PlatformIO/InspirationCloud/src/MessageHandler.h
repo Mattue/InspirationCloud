@@ -1,3 +1,7 @@
+#pragma once
+#ifndef MessageHandler_h
+#define MessageHandler_h
+
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <UniversalTelegramBot.h>
@@ -6,6 +10,8 @@
 #include <LinkedList.h>
 
 #define DEFAULT_PARSE_MODE "Markdown"
+
+#define CMD_LED "/led"
 
 #define HELP_ARG "help"
 #define FILL_ARG "fill"
@@ -34,5 +40,6 @@ private:
 public:
     MessageHandler();
     LinkedList<ParsedMessage> * handleMessages();
-    // void handleMessages(LinkedList<int> * parsedMessages);
 };
+
+#endif
