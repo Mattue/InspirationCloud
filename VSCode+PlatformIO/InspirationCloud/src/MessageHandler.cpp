@@ -181,7 +181,8 @@ LinkedList<ParsedMessage> *MessageHandler::handleMessages()
                     parsedMessage->command = RAINBOW_ARG;
                     parsedMessage->systemStatus = 2;
                     bot.sendMessage(chat_id, "RAINBOW!");
-                } else if(c.getArg(STOP_ARG).isSet())
+                }
+                else if (c.getArg(STOP_ARG).isSet())
                 {
                     parsedMessage->command = STOP_ARG;
                     parsedMessage->systemStatus = 0;
@@ -235,11 +236,12 @@ String MessageHandler::buildLedHelp()
     ledHelp += String(CMD_LED) + " \\[command] \\[option] <value>\n\n";
     ledHelp += "Commands:\n";
     //ledHelp += "-blink   blink with specified color specified numbmer of times. Options: -color, -count\n";
-    ledHelp += "-fill    switch on LED with specified color. Options: -color\n";
-    ledHelp += "-rainbow switch on or off LED rainbow.\n";
-    ledHelp += "-help    show this help\n\n";
+    ledHelp += "-" + String(FILL_ARG) + " switch on LED with specified color. Options: -" + String(COLOR_ARG) + "\n";
+    ledHelp += "-" + String(RAINBOW_ARG) + " switch on or off LED rainbow.\n";
+    ledHelp += "-" + String(STOP_ARG) + " switch off LEDs or stop " + String(CMD_LED) + " action.\n";
+    ledHelp += "-" + String(HELP_ARG) + " show this help\n\n";
     ledHelp += "Options:\n";
-    ledHelp += "-color   HEX or text color value\n";
+    ledHelp += "-" + String(COLOR_ARG) + " HEX or text color value\n";
     //ledHelp += "-count   integer number\n";
 
     return ledHelp;
