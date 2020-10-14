@@ -62,46 +62,6 @@ MessageHandler messageHandler;
 
 int system_status = 0; //idle. Full list find in MessageHandler.cpp
 
-// String getNamedOptionValue(LinkedList<Option> *options, String optionName)
-// {
-//   for (int i = 0; i < options->size(); i++)
-//   {
-//     if (options->get(i).option.equals(optionName))
-//     {
-//       return options->get(i).value;
-//     }
-//   }
-
-//   return "";
-// }
-
-// unsigned int hexToDec(String hexString)
-// {
-
-//   if (hexString.equals(""))
-//     return -1;
-
-//   unsigned int decValue = 0;
-//   int nextInt;
-
-//   for (int i = 0; i < hexString.length(); i++)
-//   {
-
-//     nextInt = int(hexString.charAt(i));
-//     if (nextInt >= 48 && nextInt <= 57)
-//       nextInt = map(nextInt, 48, 57, 0, 9);
-//     if (nextInt >= 65 && nextInt <= 70)
-//       nextInt = map(nextInt, 65, 70, 10, 15);
-//     if (nextInt >= 97 && nextInt <= 102)
-//       nextInt = map(nextInt, 97, 102, 10, 15);
-//     nextInt = constrain(nextInt, 0, 15);
-
-//     decValue = (decValue * 16) + nextInt;
-//   }
-
-//   return decValue;
-// }
-
 void setup()
 {
   // initialize the Serial
@@ -220,7 +180,7 @@ void setup()
   pinMode(LED_BUILTIN, OUTPUT);
 }
 
-LinkedList<ParsedMessage> *myMessages;
+LinkedList<ParsedMessage> *lastMessages;
 
 void loop()
 {
@@ -235,40 +195,41 @@ void loop()
     Serial.println("Checking for updates");
 #endif
 
-    myMessages = messageHandler.handleMessages();
+    currentMessage = messageHandler.handleMessages();
 
 #if DEBUG_MODE == 1
-    Serial.println("my messages size: " + String(myMessages->size()));
+    Serial.println("my messages size: " + String(currentMessage->size()));
 
-    for (int i = 0; i < myMessages->size(); i++)
+    for (int i = 0; i < currentMessage->size(); i++)
     {
-      Serial.print("! " + String(myMessages->get(i).root) + " ");
-      Serial.print(String(myMessages->get(i).command) + " ");
-      // Serial.print("(options size: "+ String(myMessages->get(i).options->size()) +")");
-      // for (int j = 0; j < myMessages->get(i).options->size(); j++)
+      Serial.print("! " + String(currentMessage->get(i).root) + " ");
+      Serial.print(String(currentMessage->get(i).command) + " ");
+      // Serial.print("(options size: "+ String(currentMessage->get(i).options->size()) +")");
+      // for (int j = 0; j < currentMessage->get(i).options->size(); j++)
       // {
-      //   Serial.print(myMessages->get(i).options->get(j).option + " " + myMessages->get(i).options->get(j).value);
+      //   Serial.print(currentMessage->get(i).options->get(j).option + " " + currentMessage->get(i).options->get(j).value);
       // }
       Serial.println();
     }
 #endif
 
-    if (myMessages->size() != 0)
+    if (currentMessage->size() != 0)
     {
-      for (int i = 0; i < myMessages->size(); i++)
+      for (int i = 0; i < currentMessage->size(); i++)
       {
-        if (myMessages->get(i).root.equals(CMD_LED))
+        if (currentMessage->get(i).root.equals(CMD_LED))
         {
-          if (myMessages->get(i).command.equals(FILL_ARG))
+          if (currentMessage->get(i).command.equals(FILL_ARG))
           {
             system_status = 1; //filled with color
           }
-          if (myMessages->get(i).command.equals(RAINBOW_ARG))
+          if (currentMessage->get(i).command.equals(RAINBOW_ARG))
           {
             system_status = 2; //playing rainbow
           }
         }
       }
+      lastMessages = currentMessage;
     }
 
     bot_lasttime = millis();
@@ -280,7 +241,7 @@ void loop()
   {
   case 1:
   {
-    //leds.color(Utils::hexToDec(Utils::getNamedOptionValue(myMessages->get(0).options, COLOR_ARG))); //this may be a problem point when more then 1 message to work with
+    leds.color(Utils::hexToDec(Utils::getNamedOptionValue(lastMessages->get(0).options, COLOR_ARG))); //this may be a problem point when more then 1 message to work with
     break;
   }
   case 2:

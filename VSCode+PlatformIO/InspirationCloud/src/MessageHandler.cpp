@@ -82,14 +82,14 @@ LinkedList<ParsedMessage> *MessageHandler::handleMessages()
 
             parsedMessage->root = c.getName();
 
-            if (c == cmdStart || c == cmdHelp)
+            if (c == cmdStart || c == cmdHelp) // /start or /help is called
             {
                 bot.sendMessage(chat_id, buildMenu(bot.messages[i]), DEFAULT_PARSE_MODE);
                 // parsedMessage.systemStatus = 0;
             }
-            else if (c == cmdLed)
+            else if (c == cmdLed) // /led is called
             {
-                if (c.getArg(HELP_ARG).isSet()) // -help is called
+                if (c.getArg(HELP_ARG).isSet() || c.countArgs() < 1) // -help or no args is called
                 {
                     bot.sendMessage(chat_id, buildLedHelp(), DEFAULT_PARSE_MODE);
                     parsedMessage->command = HELP_ARG;
@@ -129,12 +129,12 @@ LinkedList<ParsedMessage> *MessageHandler::handleMessages()
                 // currentParsedMessage.systemStatus = 0;
             }
 
-            Serial.println("Adding to List: " + parsedMessage->root);
+            // Serial.println("Adding to List: " + parsedMessage->root);
 
             parsedMessages->add(*parsedMessage);
             delete (parsedMessage);
 
-            Serial.println("parsedMessages list size: " + String(parsedMessages->size()));
+            // Serial.println("parsedMessages list size: " + String(parsedMessages->size()));
         }
 
         if (cli.errored())
@@ -169,7 +169,7 @@ String MessageHandler::buildMenu(telegramMessage currentMessage)
     welcome += "\n\n";
     welcome += "/led : for led commands\n";
     welcome += "/status : Returns current status of inspiration cloud\n";
-    welcome += "/start : to show this menu";
+    welcome += "/start or /help : to show this menu";
 
     return welcome;
 }
@@ -178,7 +178,7 @@ String MessageHandler::buildLedHelp()
 {
     String ledHelp = "/led is for playing with LED in inspiration cloud.\n";
     ledHelp += "Usage:\n";
-    ledHelp += "/led \\[command\\] \\[option\\] <value>\n\n";
+    ledHelp += "/led \\[command] \\[option] <value>\n\n";
     ledHelp += "Commands:\n";
     //ledHelp += "-blink   blink with specified color specified numbmer of times. Options: -color, -count\n";
     ledHelp += "-fill    switch on LED with specified color. Options: -color\n";
