@@ -12,16 +12,21 @@
 #define PIN2 13
 #define PIN3 15
 
-class Led {
-    public:
-        Led();
-        void switchOff();
-        void rainbow();
-        void color(int color);
-        void color(String color);
-    private:
-        CRGB leds[NUM_LEDS];
-        byte counter;
+#define RAINBOW_SPEED 5 //rainbow speed
+
+class Led
+{
+public:
+    Led();
+    void switchOff();
+    void rainbow();
+    void color(int color);
+    void color(String color);
+
+private:
+    CRGB leds[NUM_LEDS];
+    byte counter;
+    unsigned long last_millis;
 };
 
 #endif

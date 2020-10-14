@@ -28,24 +28,24 @@ MessageHandler::MessageHandler()
     clientSecure.setInsecure();
 }
 
-LinkedList<ParsedMessage> * MessageHandler::handleMessages()
+LinkedList<ParsedMessage> *MessageHandler::handleMessages()
 {
 
     int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
 
-    #if DEBUG_MODE == 1
-        Serial.print("Number of messages to handle: ");
-        Serial.println(String(numNewMessages));
-    #endif
+#if DEBUG_MODE == 1
+    Serial.print("Number of messages to handle: ");
+    Serial.println(String(numNewMessages));
+#endif
 
     LinkedList<ParsedMessage> *parsedMessages = new LinkedList<ParsedMessage>();
 
     for (int i = 0; i < numNewMessages; i++)
     {
 
-        #if DEBUG_MODE == 1
-                Serial.println("got response");
-        #endif
+#if DEBUG_MODE == 1
+        Serial.println("got response");
+#endif
 
         ParsedMessage *parsedMessage = new ParsedMessage();
 
@@ -65,20 +65,20 @@ LinkedList<ParsedMessage> * MessageHandler::handleMessages()
 
             int argNum = c.countArgs();
 
-            #if DEBUG_MODE == 1
-                        Serial.print("> ");
-                        Serial.print(c.getName());
-                        Serial.print(' ');
+#if DEBUG_MODE == 1
+            Serial.print("> ");
+            Serial.print(c.getName());
+            Serial.print(' ');
 
-                        for (int i = 0; i < argNum; ++i)
-                        {
-                            Argument arg = c.getArgument(i);
-                            Serial.print(arg.toString());
-                            Serial.print(' ');
-                        }
+            for (int i = 0; i < argNum; ++i)
+            {
+                Argument arg = c.getArgument(i);
+                Serial.print(arg.toString());
+                Serial.print(' ');
+            }
 
-                        Serial.println();
-            #endif
+            Serial.println();
+#endif
 
             parsedMessage->root = c.getName();
 
@@ -115,6 +115,11 @@ LinkedList<ParsedMessage> * MessageHandler::handleMessages()
                     {
                         bot.sendMessage(chat_id, "Please provide color to fill with -color option.\nExample: /led -fill -color RED", DEFAULT_PARSE_MODE);
                     }
+                }
+                else if (c.getArg(RAINBOW_ARG).isSet())
+                {
+                    parsedMessage->command = RAINBOW_ARG;
+                    bot.sendMessage(chat_id, "RAINBOW!");
                 }
             }
             else
@@ -175,13 +180,13 @@ String MessageHandler::buildLedHelp()
     ledHelp += "Usage:\n";
     ledHelp += "/led \\[command\\] \\[option\\] <value>\n\n";
     ledHelp += "Commands:\n";
-    ledHelp += "-blink   blink with specified color specified numbmer of times. Options: -color, -count\n";
+    //ledHelp += "-blink   blink with specified color specified numbmer of times. Options: -color, -count\n";
     ledHelp += "-fill    switch on LED with specified color. Options: -color\n";
     ledHelp += "-rainbow switch on or off LED rainbow.\n";
     ledHelp += "-help    show this help\n\n";
     ledHelp += "Options:\n";
     ledHelp += "-color   HEX or text color value\n";
-    ledHelp += "-count   integer number\n";
+    //ledHelp += "-count   integer number\n";
 
     return ledHelp;
 }

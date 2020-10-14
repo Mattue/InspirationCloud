@@ -10,11 +10,7 @@
 #include <MessageHandler.h>
 #include <structures\ParsedMessage.h>
 #include <LinkedList.h>
-
-#define NUM_LEDS 73
-#define PIN6 12
-#define PIN7 13
-#define PIN8 15
+#include <utils\Utils.h>
 
 #ifndef DEBUG_MODE
 #define DEBUG_MODE 0
@@ -57,43 +53,54 @@ extern "C"
 #define BOT_MTBS = 1000
 #endif
 
-//const unsigned long BOT_MTBS = 1000; // mean time between scan messages
 unsigned long bot_lasttime; // last time messages' scan has been done
 
-Led leds; //LED's controller
+Led leds;     //LED's controller
+byte counter; //counter for LED animations
 
 MessageHandler messageHandler;
 
 int system_status = 0; //idle. Full list find in MessageHandler.cpp
 
-String getNamedOptionValue(LinkedList<Option> * options, String optionName){
-  for(int i = 0; i < options->size(); i++) {
-    if(options->get(i).option.equals(optionName)){
-      return options->get(i).value;
-    }
-  }
+// String getNamedOptionValue(LinkedList<Option> *options, String optionName)
+// {
+//   for (int i = 0; i < options->size(); i++)
+//   {
+//     if (options->get(i).option.equals(optionName))
+//     {
+//       return options->get(i).value;
+//     }
+//   }
 
-  return "";
-}
+//   return "";
+// }
 
-unsigned int hexToDec(String hexString) {
-  
-  unsigned int decValue = 0;
-  int nextInt;
-  
-  for (int i = 0; i < hexString.length(); i++) {
-    
-    nextInt = int(hexString.charAt(i));
-    if (nextInt >= 48 && nextInt <= 57) nextInt = map(nextInt, 48, 57, 0, 9);
-    if (nextInt >= 65 && nextInt <= 70) nextInt = map(nextInt, 65, 70, 10, 15);
-    if (nextInt >= 97 && nextInt <= 102) nextInt = map(nextInt, 97, 102, 10, 15);
-    nextInt = constrain(nextInt, 0, 15);
-    
-    decValue = (decValue * 16) + nextInt;
-  }
-  
-  return decValue;
-}
+// unsigned int hexToDec(String hexString)
+// {
+
+//   if (hexString.equals(""))
+//     return -1;
+
+//   unsigned int decValue = 0;
+//   int nextInt;
+
+//   for (int i = 0; i < hexString.length(); i++)
+//   {
+
+//     nextInt = int(hexString.charAt(i));
+//     if (nextInt >= 48 && nextInt <= 57)
+//       nextInt = map(nextInt, 48, 57, 0, 9);
+//     if (nextInt >= 65 && nextInt <= 70)
+//       nextInt = map(nextInt, 65, 70, 10, 15);
+//     if (nextInt >= 97 && nextInt <= 102)
+//       nextInt = map(nextInt, 97, 102, 10, 15);
+//     nextInt = constrain(nextInt, 0, 15);
+
+//     decValue = (decValue * 16) + nextInt;
+//   }
+
+//   return decValue;
+// }
 
 void setup()
 {
@@ -169,44 +176,48 @@ void setup()
   //Wireles firmare upload init
   ArduinoOTA.onStart([]() {
     Serial.println("Start of OTA update"); //  "Начало OTA-апдейта"
-
-    // for (int i = 0; i < NUM_LEDS; i++)
-    // {
-    //   leds[i] = CRGB::Black;
-    // }
-
-    // FastLED.show();
     leds.switchOff();
+    //TODO: do LED notification
   });
   ArduinoOTA.onEnd([]() {
     Serial.println("\nEnd of OTA update"); //  "Завершение OTA-апдейта"
+    //TODO: do LED notification
   });
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
     Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+    //TODO: do LED notification
   });
   ArduinoOTA.onError([](ota_error_t error) {
     Serial.printf("Error[%u]: ", error);
-    if (error == OTA_AUTH_ERROR)
+    if (error == OTA_AUTH_ERROR) //  "Ошибка при аутентификации"
+    {
       Serial.println("Auth Failed");
-    //  "Ошибка при аутентификации"
-    else if (error == OTA_BEGIN_ERROR)
+      //TODO: do LED notification
+    }
+    else if (error == OTA_BEGIN_ERROR) //  "Ошибка при начале OTA-апдейта"
+    {
       Serial.println("Begin Failed");
-    //  "Ошибка при начале OTA-апдейта"
-    else if (error == OTA_CONNECT_ERROR)
+      //TODO: do LED notification
+    }
+    else if (error == OTA_CONNECT_ERROR) //  "Ошибка при подключении"
+    {
       Serial.println("Connect Failed");
-    //  "Ошибка при подключении"
-    else if (error == OTA_RECEIVE_ERROR)
+      //TODO: do LED notification
+    }
+    else if (error == OTA_RECEIVE_ERROR) //  "Ошибка при получении данных"
+    {
       Serial.println("Receive Failed");
-    //  "Ошибка при получении данных"
-    else if (error == OTA_END_ERROR)
+      //TODO: do LED notification
+    }
+    else if (error == OTA_END_ERROR) //  "Ошибка при завершении OTA-апдейта"
+    {
       Serial.println("End Failed");
-    //  "Ошибка при завершении OTA-апдейта"
+      //TODO: do LED notification
+    }
   });
   ArduinoOTA.begin();
 
   pinMode(LED_BUILTIN, OUTPUT);
-
-  // leds.color(hexToDec("#f5e042"));
 }
 
 LinkedList<ParsedMessage> *myMessages;
@@ -217,6 +228,9 @@ void loop()
 
   if (millis() > bot_lasttime + BOT_MTBS)
   {
+
+    LinkedList<ParsedMessage> *currentMessage;
+
 #if DEBUG_MODE == 1
     Serial.println("Checking for updates");
 #endif
@@ -239,20 +253,44 @@ void loop()
     }
 #endif
 
+    if (myMessages->size() != 0)
+    {
+      for (int i = 0; i < myMessages->size(); i++)
+      {
+        if (myMessages->get(i).root.equals(CMD_LED))
+        {
+          if (myMessages->get(i).command.equals(FILL_ARG))
+          {
+            system_status = 1; //filled with color
+          }
+          if (myMessages->get(i).command.equals(RAINBOW_ARG))
+          {
+            system_status = 2; //playing rainbow
+          }
+        }
+      }
+    }
+
     bot_lasttime = millis();
     Serial.println("------------------------------");
     Serial.println("FreeRAM: " + String(ESP.getFreeHeap()));
   }
 
-  if (myMessages->size() != 0)
+  switch (system_status)
   {
-    for (int i = 0; i < myMessages->size(); i++) {
-      if(myMessages->get(i).root.equals("/led")) {
-        if(myMessages->get(i).command.equals(FILL_ARG)){
-          leds.color(hexToDec(getNamedOptionValue(myMessages->get(i).options, COLOR_ARG)));
-        }
-      }
-    }
+  case 1:
+  {
+    //leds.color(Utils::hexToDec(Utils::getNamedOptionValue(myMessages->get(0).options, COLOR_ARG))); //this may be a problem point when more then 1 message to work with
+    break;
+  }
+  case 2:
+  {
+    leds.rainbow();
+    break;
+  }
+
+  default:
+    break;
   }
 
   // delete(myMessages);

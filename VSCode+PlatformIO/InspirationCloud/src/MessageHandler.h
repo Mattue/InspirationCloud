@@ -19,7 +19,7 @@
 #define BLINK_ARG "blink"
 #define RAINBOW_ARG "rainbow"
 #define COUNT_ARG "count"
-#define DEFAULT_OPTIONAL "-1"
+#define DEFAULT_OPTIONAL "value"
 
 class MessageHandler
 {
@@ -39,7 +39,7 @@ private:
 
 public:
     MessageHandler();
-    LinkedList<ParsedMessage> * handleMessages();
+    LinkedList<ParsedMessage> *handleMessages();
 };
 
 #endif
