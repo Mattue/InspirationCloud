@@ -26,6 +26,7 @@ public:
     void color(CRGB::HTMLColorCode color);
     void color(String color);
     void color(unsigned int color);
+    void setColorByPercent(int percent);
 
 private:
     CRGB leds[NUM_LEDS];

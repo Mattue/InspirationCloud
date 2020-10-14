@@ -83,7 +83,6 @@ void setup()
 #if DEBUG_MODE == 1
     IPAddress ip = WiFi.localIP();
     Serial.println("INFO: Connected to WiFi. IP address: " + ip.toString());
-    //Serial.println(ip);
 #endif
   }
   else
@@ -139,18 +138,24 @@ void setup()
   ArduinoOTA.setRebootOnSuccess(true);
   ArduinoOTA.onStart([]() {
     Serial.println("INFO: Start of OTA update"); //  "Начало OTA-апдейта"
-    leds.switchOff();
-    //TODO: do LED notification
+    
+    leds.color("Yellow");
+    delay(1000);
+
   });
   ArduinoOTA.onEnd([]() {
     Serial.println("\nINFO: End of OTA update"); //  "Завершение OTA-апдейта"
-    //TODO: do LED notification
+    delay(2000);
+    leds.switchOff();
   });
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
-    Serial.printf("INFO: Progress: %u%%\r", (progress / (total / 100)));
-    //TODO: do LED notification
+    leds.setColorByPercent((progress / (total / 100)));
   });
   ArduinoOTA.onError([](ota_error_t error) {
+    
+    leds.color("Red");
+    delay(1000);
+
     Serial.printf("ERROR: Error[%u]: ", error);
     if (error == OTA_AUTH_ERROR) //  "Ошибка при аутентификации"
     {
@@ -246,6 +251,11 @@ void loop()
   {
     switch (lastMessages->get(0).systemStatus) //this may be a problem point when more then 1 message to work with
     {
+    case 0:
+    {
+      leds.switchOff();
+      break;
+    }
     case 1:
     {
       leds.color(Utils::getNamedOptionValue(lastMessages->get(0).options, COLOR_ARG));

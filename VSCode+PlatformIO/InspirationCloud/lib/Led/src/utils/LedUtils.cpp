@@ -43,6 +43,10 @@ CRGB::HTMLColorCode LedUtils::colorToHex(String color)
   {
     return CRGB::Green;
   }
+  else if (color.equals("YELLOW"))
+  {
+    return CRGB::Yellow;
+  }
   else
   {
     return CRGB::Black;

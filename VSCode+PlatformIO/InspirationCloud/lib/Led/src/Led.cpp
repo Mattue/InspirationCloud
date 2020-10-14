@@ -18,16 +18,17 @@ Led::Led()
   FastLED.setBrightness(70);
 }
 
+void Led::setColorByPercent(int percent) {
+  int ledsToFill = ((NUM_LEDS * percent) / 100);
+  for(int i = 0; i < ledsToFill; i++) {
+    leds[i] = CRGB::Green;
+  }
+  FastLED.show();
+}
+
 void Led::switchOff()
 {
-
   FastLED.clear();
-
-  // for (int i = 0; i < NUM_LEDS; i++)
-  // {
-  //   leds[i] = CRGB::Black;
-  // }
-
   FastLED.show();
 }
 

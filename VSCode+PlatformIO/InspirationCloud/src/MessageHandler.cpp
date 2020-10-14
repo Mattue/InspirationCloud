@@ -19,7 +19,9 @@ MessageHandler::MessageHandler()
     cmdLed.addFlagArg(BLINK_ARG);
     cmdLed.addFlagArg(FILL_ARG);
     cmdLed.addFlagArg(RAINBOW_ARG);
+    cmdLed.addFlagArg(STOP_ARG);
     cmdLed.addFlagArg(HELP_ARG);
+
     cmdLed.addArg(COLOR_ARG, DEFAULT_CMD_VALUE);
     cmdLed.addArg(COUNT_ARG, DEFAULT_CMD_VALUE);
 
@@ -174,11 +176,16 @@ LinkedList<ParsedMessage> *MessageHandler::handleMessages()
                         break;
                     }
                 }
-                else if (c.getArg(RAINBOW_ARG).isSet())
+                else if (c.getArg(RAINBOW_ARG).isSet()) // -rainbow is called
                 {
                     parsedMessage->command = RAINBOW_ARG;
                     parsedMessage->systemStatus = 2;
                     bot.sendMessage(chat_id, "RAINBOW!");
+                } else if(c.getArg(STOP_ARG).isSet())
+                {
+                    parsedMessage->command = STOP_ARG;
+                    parsedMessage->systemStatus = 0;
+                    bot.sendMessage(chat_id, "Switching LEDs off.");
                 }
             }
             else

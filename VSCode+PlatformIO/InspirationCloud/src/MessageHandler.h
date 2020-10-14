@@ -18,11 +18,14 @@
 #define CMD_HELP "/help"
 
 #define HELP_ARG "help"
-#define FILL_ARG "fill"
-#define COLOR_ARG "color"
 #define BLINK_ARG "blink"
+#define FILL_ARG "fill"
+#define STOP_ARG "stop"
 #define RAINBOW_ARG "rainbow"
+
+#define COLOR_ARG "color"
 #define COUNT_ARG "count"
+
 #define DEFAULT_CMD_VALUE "value"
 
 class MessageHandler
