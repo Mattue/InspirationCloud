@@ -53,7 +53,7 @@ extern "C"
 #define BOT_MTBS = 1000
 #endif
 
-unsigned long bot_lasttime; // last time messages' scan has been done
+unsigned long lastMillis = millis(); // last time messages' scan has been done
 
 Led leds;     //LED's controller
 byte counter; //counter for LED animations
@@ -70,8 +70,7 @@ void setup()
 #if SSID_MODE == 0
 // connect the ESP8266 to the desired access point
 #if DEBUG_MODE == 1
-  Serial.print("Connecting to WiFi: ");
-  Serial.println(SSID_NAME);
+  Serial.println("\nConnecting to WiFi: " + String(SSID_NAME));
 #endif
 
   WiFi.mode(WIFI_STA);
@@ -83,8 +82,8 @@ void setup()
   {
 #if DEBUG_MODE == 1
     IPAddress ip = WiFi.localIP();
-    Serial.print("Connected to WiFi. IP address: ");
-    Serial.println(ip);
+    Serial.println("Connected to WiFi. IP address: " + ip.toString());
+    //Serial.println(ip);
 #endif
   }
   else
@@ -123,8 +122,10 @@ void setup()
   // Wait for connection AND IP address from DHCP
   while (WiFi.status() != WL_CONNECTED)
   {
-    delay(500);
-    Serial.print(".");
+    if(millis > lastMillis + 500) {
+      Serial.print(".");
+      lastMillis = millis();
+    }
   }
 
   IPAddress ip = WiFi.localIP();
@@ -186,7 +187,7 @@ void loop()
 {
   ArduinoOTA.handle();
 
-  if (millis() > bot_lasttime + BOT_MTBS)
+  if (millis() > lastMillis + BOT_MTBS)
   {
 
     LinkedList<ParsedMessage> *currentMessage;
@@ -224,12 +225,13 @@ void loop()
     {
       if (currentMessage->size() != 0)
       {
+        delete (lastMessages);
         lastMessages = currentMessage;
         //system_status = lastMessages->get(0).systemStatus; //this may be a problem point when more then 1 message to work with
       }
     }
 
-    bot_lasttime = millis();
+    lastMillis = millis();
     Serial.println("FreeRAM: " + String(ESP.getFreeHeap()));
     Serial.println("------------------------------");
   }

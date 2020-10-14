@@ -36,7 +36,7 @@ private:
     Command cmdLed;
     Command cmdStatus;
 
-    static String buildMenu(telegramMessage currentMessage);
+    static String buildMenu(telegramMessage *currentMessage);
     static String buildLedHelp();
     static bool isArgsNotSet(Command *cmd);
 

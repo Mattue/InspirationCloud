@@ -138,7 +138,7 @@ LinkedList<ParsedMessage> *MessageHandler::handleMessages()
 
             if (c == cmdStart || c == cmdHelp) // /start or /help is called
             {
-                bot.sendMessage(chat_id, buildMenu(bot.messages[i]), DEFAULT_PARSE_MODE);
+                bot.sendMessage(chat_id, buildMenu(&bot.messages[i]), DEFAULT_PARSE_MODE);
                 return NULL; //TODO: delete parsedMessages
             }
             else if (c == cmdLed) // /led is called
@@ -204,9 +204,9 @@ LinkedList<ParsedMessage> *MessageHandler::handleMessages()
     return parsedMessages;
 }
 
-String MessageHandler::buildMenu(telegramMessage currentMessage)
+String MessageHandler::buildMenu(telegramMessage *currentMessage)
 {
-    String welcome = "Hello there " + currentMessage.from_name + "!\n";
+    String welcome = "Hello there " + currentMessage->from_name + "!\n";
     welcome += "Welcome to Inspiration cloud.\n";
     welcome += "\n\n";
     welcome += String(CMD_LED) + " : for led commands\n";
