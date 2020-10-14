@@ -70,7 +70,7 @@ void setup()
 #if SSID_MODE == 0
 // connect the ESP8266 to the desired access point
 #if DEBUG_MODE == 1
-  Serial.println("\nConnecting to WiFi: " + String(SSID_NAME));
+  Serial.println("\nINFO: Connecting to WiFi: " + String(SSID_NAME));
 #endif
 
   WiFi.mode(WIFI_STA);
@@ -82,14 +82,14 @@ void setup()
   {
 #if DEBUG_MODE == 1
     IPAddress ip = WiFi.localIP();
-    Serial.println("Connected to WiFi. IP address: " + ip.toString());
+    Serial.println("INFO: Connected to WiFi. IP address: " + ip.toString());
     //Serial.println(ip);
 #endif
   }
   else
   {
 #if DEBUG_MODE == 1
-    Serial.println("Failed to connect to WiFi. Resetting ESP");
+    Serial.println("ERROR: Failed to connect to WiFi. Resetting ESP");
 #endif
     delay(5000);
     ESP.restart();
@@ -97,7 +97,7 @@ void setup()
 #else
 //connect the ESP8266 to wpa2-enterprise
 #if DEBUG_MODE == 1
-  Serial.print("Connecting to WiFi: ");
+  Serial.print("INFO: Connecting to WiFi: ");
   Serial.println(SSID_NAME);
 #endif
   wifi_set_opmode(STATION_MODE);
@@ -122,34 +122,35 @@ void setup()
   // Wait for connection AND IP address from DHCP
   while (WiFi.status() != WL_CONNECTED)
   {
-    if(millis > lastMillis + 500) {
+    if (millis > lastMillis + 500)
+    {
       Serial.print(".");
       lastMillis = millis();
     }
   }
 
   IPAddress ip = WiFi.localIP();
-  Serial.print("Connected to WiFi. IP address: ");
+  Serial.print("INFO: Connected to WiFi. IP address: ");
   Serial.println(ip);
 #endif
 #endif
 
   //Wireles firmare upload init
   ArduinoOTA.onStart([]() {
-    Serial.println("Start of OTA update"); //  "Начало OTA-апдейта"
+    Serial.println("INFO: Start of OTA update"); //  "Начало OTA-апдейта"
     leds.switchOff();
     //TODO: do LED notification
   });
   ArduinoOTA.onEnd([]() {
-    Serial.println("\nEnd of OTA update"); //  "Завершение OTA-апдейта"
+    Serial.println("\nINFO: End of OTA update"); //  "Завершение OTA-апдейта"
     //TODO: do LED notification
   });
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
-    Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+    Serial.printf("INFO: Progress: %u%%\r", (progress / (total / 100)));
     //TODO: do LED notification
   });
   ArduinoOTA.onError([](ota_error_t error) {
-    Serial.printf("Error[%u]: ", error);
+    Serial.printf("ERROR: Error[%u]: ", error);
     if (error == OTA_AUTH_ERROR) //  "Ошибка при аутентификации"
     {
       Serial.println("Auth Failed");
@@ -193,48 +194,51 @@ void loop()
     LinkedList<ParsedMessage> *currentMessage;
 
 #if DEBUG_MODE == 1
-    Serial.println("Checking for updates");
+    Serial.println("INFO: Checking for updates");
 #endif
 
     currentMessage = messageHandler.handleMessages();
-
-#if DEBUG_MODE == 1
-    if (currentMessage != NULL)
-    {
-      Serial.println("currentMessages size: " + String(currentMessage->size()));
-
-      for (int i = 0; i < currentMessage->size(); i++)
-      {
-        Serial.print("! " + String(currentMessage->get(i).root) + " ");
-        Serial.print(String(currentMessage->get(i).command) + " ");
-        // Serial.print("(options size: "+ String(currentMessage->get(i).options->size()) +")");
-        // for (int j = 0; j < currentMessage->get(i).options->size(); j++)
-        // {
-        //   Serial.print(currentMessage->get(i).options->get(j).option + " " + currentMessage->get(i).options->get(j).value);
-        // }
-        Serial.println();
-      }
-    }
-    else
-    {
-      Serial.println("INFO: currentMessages is NULL");
-    }
-#endif
 
     if (currentMessage != NULL)
     {
       if (currentMessage->size() != 0)
       {
-        //delete (lastMessages);
         Utils::deleteParsedMessageList(lastMessages);
         lastMessages = currentMessage;
         //system_status = lastMessages->get(0).systemStatus; //this may be a problem point when more then 1 message to work with
       }
+
+#if DEBUG_MODE == 1
+      Serial.println("DEBUG: currentMessages size: " + String(currentMessage->size()));
+
+      for (int i = 0; i < currentMessage->size(); i++)
+      {
+        Serial.print("DEBUG: ! " + String(currentMessage->get(i).root) + " ");
+        Serial.print(String(currentMessage->get(i).command) + " ");
+        if (currentMessage->get(i).options != NULL)
+        {
+          for (int j = 0; j < currentMessage->get(i).options->size(); j++)
+          {
+            Serial.print(currentMessage->get(i).options->get(j).option + " " + currentMessage->get(i).options->get(j).value);
+          }
+        }
+        Serial.println();
+      }
+#endif
+    }
+    else
+    {
+#if DEBUG_MODE == 1
+      Serial.println("INFO: currentMessages is NULL");
+#endif
     }
 
     lastMillis = millis();
-    Serial.println("FreeRAM: " + String(ESP.getFreeHeap()));
+
+#if DEBUG_MODE == 1
+    Serial.println("DEBUG: FreeRAM: " + String(ESP.getFreeHeap()));
     Serial.println("------------------------------");
+#endif
   }
 
   if (lastMessages != NULL)
@@ -256,18 +260,4 @@ void loop()
       break;
     }
   }
-  else
-  {
-#if DEBUG_MODE == 1
-    //Serial.println("lastMessages is NULL");
-#endif
-  }
-
-  // delete(myMessages);
-  // if (myMessages->size() != 0) {
-  //   myMessages->~LinkedList();
-  // }
-  // myMessages->~LinkedList();
-  // myMessages->clear();
-  // delete(myMessages);
 }

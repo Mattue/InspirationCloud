@@ -1,4 +1,5 @@
 #pragma once
+
 #ifndef MessageHandler_h
 #define MessageHandler_h
 

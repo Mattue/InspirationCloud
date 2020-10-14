@@ -48,9 +48,6 @@ void Utils::deleteParsedMessageList(LinkedList<ParsedMessage> *linkedList)
     {
       for (int i = 0; i < linkedList->size(); i++)
       {
-        // for(int j = 0; j < linkedList->get(i).options->size(); j++){
-        //   delete(&linkedList->get(i).options->get(j));
-        // }
         linkedList->get(i).options->clear();
         delete (linkedList->get(i).options);
       }

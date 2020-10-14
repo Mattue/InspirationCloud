@@ -32,11 +32,6 @@ void Led::rainbow()
 {
   if (millis() > lastMillis + RAINBOW_SPEED)
   {
-    
-#if DEBUG_MODE == 1
-    //Serial.println("Showing rainbow, counter: " + String(counter));
-#endif
-
     for (int i = 0; i < NUM_LEDS; i++)
     {                                            // от 0 до первой трети
       leds[i] = CHSV(counter + i * 2, 255, 255); // HSV. Увеличивать HUE (цвет)

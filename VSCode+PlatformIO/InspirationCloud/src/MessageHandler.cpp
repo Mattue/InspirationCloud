@@ -37,9 +37,9 @@ bool MessageHandler::isArgsNotSet(Command *cmd)
     {
 
 #if DEBUG_MODE == 1
-        Serial.println("Is Set: " + String(cmd->getArg(j).isSet()));
-        Serial.println("Is Default value:" + String(cmd->getArg(j).getValue() == DEFAULT_CMD_VALUE) + " ; " + String(cmd->getArg(j).getValue()));
-        Serial.println("Is Value NULL: " + String(cmd->getArg(j).getValue() == NULL) + " or just empty: " + String(cmd->getArg(j).getValue().isEmpty()));
+        Serial.println("DEBUG: Is Set: " + String(cmd->getArg(j).isSet()));
+        Serial.println("DEBUG: Is Default value:" + String(cmd->getArg(j).getValue() == DEFAULT_CMD_VALUE) + " ; " + String(cmd->getArg(j).getValue()));
+        Serial.println("DEBUG: Is Value NULL: " + String(cmd->getArg(j).getValue() == NULL) + " or just empty: " + String(cmd->getArg(j).getValue().isEmpty()));
 #endif
 
         if (cmd->getArg(j).getValue().isEmpty())
@@ -121,7 +121,7 @@ LinkedList<ParsedMessage> *MessageHandler::handleMessages()
             int argNum = c.countArgs();
 
 #if DEBUG_MODE == 1
-            Serial.print("> ");
+            Serial.print("DEBUG: > ");
             Serial.print(c.getName());
             Serial.print(' ');
 
