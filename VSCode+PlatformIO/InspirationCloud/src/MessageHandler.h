@@ -34,7 +34,7 @@ class MessageHandler
 
 private:
     WiFiClientSecure clientSecure;
-    UniversalTelegramBot bot = UniversalTelegramBot(BOT_TOKEN, clientSecure);
+    UniversalTelegramBot bot = UniversalTelegramBot(TELEGRAM_BOT_TOKEN, clientSecure);
 
     SimpleCLI cli;
     Command cmdStart;

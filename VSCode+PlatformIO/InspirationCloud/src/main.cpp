@@ -11,6 +11,7 @@
 #include <structures\ParsedMessage.h>
 #include <LinkedList.h>
 #include <utils\Utils.h>
+#include <ArduSlack.h>
 
 #ifndef DEBUG_MODE
 #define DEBUG_MODE 0
@@ -28,8 +29,16 @@
 #define SSID_PASSWORD "qwerty1480"
 #endif
 
-#ifndef BOT_TOKEN
-#define BOT_TOKEN "571169334:AAEr3G6dtKkEtXMBRusBd9yAklLYw2QhgzY"
+#ifndef TELEGRAM_BOT_TOKEN
+#define TELEGRAM_BOT_TOKEN "571169334:AAEr3G6dtKkEtXMBRusBd9yAklLYw2QhgzY"
+#endif
+
+#ifndef SLACK_BOT_TOKEN
+#define SLACK_BOT_TOKEN "571169334:AAEr3G6dtKkEtXMBRusBd9yAklLYw2QhgzY"
+#endif
+
+#ifndef SLACK_SSL_FINGERPRINT
+#define SLACK_SSL_FINGERPRINT ""
 #endif
 
 //https://github.com/esp8266/Arduino/issues/1032#issuecomment-285314332
