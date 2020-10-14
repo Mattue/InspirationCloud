@@ -136,6 +136,7 @@ void setup()
 #endif
 
   //Wireles firmare upload init
+  ArduinoOTA.setRebootOnSuccess(true);
   ArduinoOTA.onStart([]() {
     Serial.println("INFO: Start of OTA update"); //  "Начало OTA-апдейта"
     leds.switchOff();
@@ -247,7 +248,7 @@ void loop()
     {
     case 1:
     {
-      leds.color(Utils::hexToDec(Utils::getNamedOptionValue(lastMessages->get(0).options, COLOR_ARG))); //this may be a problem point when more then 1 message to work with
+      leds.color(Utils::getNamedOptionValue(lastMessages->get(0).options, COLOR_ARG));
       break;
     }
     case 2:

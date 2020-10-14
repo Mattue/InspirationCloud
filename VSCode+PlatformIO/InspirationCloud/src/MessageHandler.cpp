@@ -118,14 +118,12 @@ LinkedList<ParsedMessage> *MessageHandler::handleMessages()
         {
             Command c = cli.getCmd();
 
-            int argNum = c.countArgs();
-
 #if DEBUG_MODE == 1
             Serial.print("DEBUG: > ");
             Serial.print(c.getName());
             Serial.print(' ');
 
-            for (int i = 0; i < argNum; ++i)
+            for (int i = 0; i < c.countArgs(); ++i)
             {
                 Argument arg = c.getArgument(i);
                 Serial.print(arg.toString());

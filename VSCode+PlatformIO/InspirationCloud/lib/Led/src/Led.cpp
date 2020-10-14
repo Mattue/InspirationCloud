@@ -20,10 +20,13 @@ Led::Led()
 
 void Led::switchOff()
 {
-  for (int i = 0; i < NUM_LEDS; i++)
-  {
-    leds[i] = CRGB::Black;
-  }
+
+  FastLED.clear();
+
+  // for (int i = 0; i < NUM_LEDS; i++)
+  // {
+  //   leds[i] = CRGB::Black;
+  // }
 
   FastLED.show();
 }
@@ -43,12 +46,22 @@ void Led::rainbow()
   }
 }
 
-void Led::color(int color)
+void Led::color(CRGB::HTMLColorCode color)
 {
 
-  if (color == -1)
-    switchOff();
+#if DEBUG_MODE == 1
+  // Serial.println("DEBUG: Filling with " + String(color));
+#endif
 
+  for (int i = 0; i < NUM_LEDS; i++)
+  {
+    leds[i] = color;
+  }
+
+  FastLED.show();
+}
+
+void Led::color(unsigned int color) {
   for (int i = 0; i < NUM_LEDS; i++)
   {
     leds[i] = color;
@@ -59,14 +72,15 @@ void Led::color(int color)
 
 void Led::color(String color)
 {
+#if DEBUG_MODE == 1
+  Serial.println("DEBUG: Filling with " + color);
+#endif
 
-  if (color.equals(""))
-    switchOff();
+  color.toUpperCase();
 
-  for (int i = 0; i < NUM_LEDS; i++)
-  {
-    leds[i] = CRGB::Red;
+  if(color.startsWith("#")) {
+    this->color(LedUtils::hexToDec(color));
+  } else {
+    this->color(LedUtils::colorToHex(color));
   }
-
-  FastLED.show();
 }

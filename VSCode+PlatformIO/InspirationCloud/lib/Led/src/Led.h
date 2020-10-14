@@ -7,6 +7,7 @@
 
 #include <Arduino.h>
 #include <FastLED.h>
+#include <utils\LedUtils.h>
 
 //#define NUM_LEDS 73
 #define NUM_LEDS 35
@@ -22,13 +23,15 @@ public:
     Led();
     void switchOff();
     void rainbow();
-    void color(int color);
+    void color(CRGB::HTMLColorCode color);
     void color(String color);
+    void color(unsigned int color);
 
 private:
     CRGB leds[NUM_LEDS];
     byte counter;
     unsigned long lastMillis;
+    static CRGB::HTMLColorCode colorToHex(String color);
 };
 
 #endif

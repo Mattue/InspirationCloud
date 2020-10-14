@@ -12,7 +12,6 @@ class Utils
 {
 public:
     static String getNamedOptionValue(LinkedList<Option> *options, String optionName);
-    static unsigned int hexToDec(String hexString);
     static void deleteParsedMessageList(LinkedList<ParsedMessage> *linkedList);
     static void deleteParsedMessage(ParsedMessage *parsedMessage);
 };
