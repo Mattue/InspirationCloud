@@ -1,4 +1,5 @@
 #pragma once
+
 #ifndef Option_h
 #define Option_h
 

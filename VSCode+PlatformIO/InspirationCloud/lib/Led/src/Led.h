@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef Led_h
 #define Led_h
 
@@ -26,7 +28,7 @@ public:
 private:
     CRGB leds[NUM_LEDS];
     byte counter;
-    unsigned long last_millis;
+    unsigned long lastMillis;
 };
 
 #endif

@@ -225,7 +225,8 @@ void loop()
     {
       if (currentMessage->size() != 0)
       {
-        delete (lastMessages);
+        //delete (lastMessages);
+        Utils::deleteParsedMessageList(lastMessages);
         lastMessages = currentMessage;
         //system_status = lastMessages->get(0).systemStatus; //this may be a problem point when more then 1 message to work with
       }
@@ -238,7 +239,6 @@ void loop()
 
   if (lastMessages != NULL)
   {
-
     switch (lastMessages->get(0).systemStatus) //this may be a problem point when more then 1 message to work with
     {
     case 1:

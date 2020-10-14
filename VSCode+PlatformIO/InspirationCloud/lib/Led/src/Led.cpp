@@ -30,11 +30,11 @@ void Led::switchOff()
 
 void Led::rainbow()
 {
-  if (millis() > last_millis + RAINBOW_SPEED)
+  if (millis() > lastMillis + RAINBOW_SPEED)
   {
     
 #if DEBUG_MODE == 1
-    Serial.println("Showing rainbow, counter: " + String(counter));
+    //Serial.println("Showing rainbow, counter: " + String(counter));
 #endif
 
     for (int i = 0; i < NUM_LEDS; i++)
@@ -44,7 +44,7 @@ void Led::rainbow()
     }
     counter++; // counter меняется от 0 до 255 (тип данных byte)
     FastLED.show();
-    last_millis = millis();
+    lastMillis = millis();
   }
 }
 

@@ -1,4 +1,5 @@
 #pragma once
+
 #ifndef ParsedMessage_h
 #define ParsedMessage_h
 

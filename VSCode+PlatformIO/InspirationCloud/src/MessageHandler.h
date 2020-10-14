@@ -8,6 +8,7 @@
 #include <SimpleCLI.h>
 #include <structures\ParsedMessage.h>
 #include <LinkedList.h>
+#include <utils\Utils.h>
 
 #define DEFAULT_PARSE_MODE "Markdown"
 

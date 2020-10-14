@@ -110,7 +110,8 @@ LinkedList<ParsedMessage> *MessageHandler::handleMessages()
             // }
 
             bot.sendMessage(chat_id, errorMessage, DEFAULT_PARSE_MODE);
-            return NULL;
+            Utils::deleteParsedMessage(parsedMessage);
+            break;
         }
 
         if (cli.available())
@@ -139,14 +140,16 @@ LinkedList<ParsedMessage> *MessageHandler::handleMessages()
             if (c == cmdStart || c == cmdHelp) // /start or /help is called
             {
                 bot.sendMessage(chat_id, buildMenu(&bot.messages[i]), DEFAULT_PARSE_MODE);
-                return NULL; //TODO: delete parsedMessages
+                Utils::deleteParsedMessage(parsedMessage);
+                break;
             }
             else if (c == cmdLed) // /led is called
             {
                 if (c.getArg(HELP_ARG).isSet() || isArgsNotSet(&c)) // -help or no args is called
                 {
                     bot.sendMessage(chat_id, buildLedHelp(), DEFAULT_PARSE_MODE);
-                    return NULL; //TODO: delete parsedMessages
+                    Utils::deleteParsedMessage(parsedMessage);
+                    break;
                 }
                 else if (c.getArg(FILL_ARG).isSet()) // -fill is called
                 {
@@ -169,7 +172,8 @@ LinkedList<ParsedMessage> *MessageHandler::handleMessages()
                     else
                     {
                         bot.sendMessage(chat_id, "Please provide color to fill with -" + String(COLOR_ARG) + " option.\nExample: " + String(CMD_LED) + " -" + String(FILL_ARG) + " -" + String(COLOR_ARG) + " RED", DEFAULT_PARSE_MODE);
-                        return NULL; //TODO: delete parsedMessages
+                        Utils::deleteParsedMessage(parsedMessage);
+                        break;
                     }
                 }
                 else if (c.getArg(RAINBOW_ARG).isSet())
@@ -182,24 +186,27 @@ LinkedList<ParsedMessage> *MessageHandler::handleMessages()
             else
             {
                 bot.sendMessage(chat_id, "Unknown command.\nRun " + String(CMD_START) + " or " + String(CMD_HELP) + " to get list of valid commands.", DEFAULT_PARSE_MODE);
-                return NULL; //TODO: delete parsedMessages
+                Utils::deleteParsedMessage(parsedMessage);
+                break;
             }
 
-            // Serial.println("Adding to List: " + parsedMessage->root);
+#if DEBUG_MODE == 1
+            Serial.println("DEBUG: Adding to List: " + parsedMessage->root);
+#endif
 
             parsedMessages->add(*parsedMessage);
-            delete (parsedMessage);
 
-            // Serial.println("parsedMessages list size: " + String(parsedMessages->size()));
+#if DEBUG_MODE == 1
+            Serial.println("DEBUG: parsedMessages list size: " + String(parsedMessages->size()));
+#endif
         }
     }
 
-    //     if(parsedMessages->size() == 0) {
-    //         delete(parsedMessages);
-    //         //parsedMessages.~LinkedList();
-    //     }
-
-    // Serial.println("parsedMessages list size before return: " + String(parsedMessages->size()));
+    if (parsedMessages->size() == 0)
+    {
+        Utils::deleteParsedMessageList(parsedMessages);
+        return NULL;
+    }
 
     return parsedMessages;
 }
