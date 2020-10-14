@@ -19,7 +19,7 @@
 #define BLINK_ARG "blink"
 #define RAINBOW_ARG "rainbow"
 #define COUNT_ARG "count"
-#define DEFAULT_OPTIONAL "value"
+#define DEFAULT_CMD_VALUE "value"
 
 class MessageHandler
 {
@@ -36,6 +36,7 @@ private:
 
     static String buildMenu(telegramMessage currentMessage);
     static String buildLedHelp();
+    static bool isArgsNotSet(Command *cmd);
 
 public:
     MessageHandler();

@@ -1,5 +1,3 @@
-#pragma ones
-
 #ifndef Utils_h
 #define Utils_h
 

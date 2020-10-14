@@ -180,7 +180,7 @@ void setup()
   pinMode(LED_BUILTIN, OUTPUT);
 }
 
-LinkedList<ParsedMessage> *lastMessages;
+LinkedList<ParsedMessage> *lastMessages = NULL;
 
 void loop()
 {
@@ -198,60 +198,67 @@ void loop()
     currentMessage = messageHandler.handleMessages();
 
 #if DEBUG_MODE == 1
-    Serial.println("my messages size: " + String(currentMessage->size()));
-
-    for (int i = 0; i < currentMessage->size(); i++)
+    if (currentMessage != NULL)
     {
-      Serial.print("! " + String(currentMessage->get(i).root) + " ");
-      Serial.print(String(currentMessage->get(i).command) + " ");
-      // Serial.print("(options size: "+ String(currentMessage->get(i).options->size()) +")");
-      // for (int j = 0; j < currentMessage->get(i).options->size(); j++)
-      // {
-      //   Serial.print(currentMessage->get(i).options->get(j).option + " " + currentMessage->get(i).options->get(j).value);
-      // }
-      Serial.println();
+      Serial.println("currentMessages size: " + String(currentMessage->size()));
+
+      for (int i = 0; i < currentMessage->size(); i++)
+      {
+        Serial.print("! " + String(currentMessage->get(i).root) + " ");
+        Serial.print(String(currentMessage->get(i).command) + " ");
+        // Serial.print("(options size: "+ String(currentMessage->get(i).options->size()) +")");
+        // for (int j = 0; j < currentMessage->get(i).options->size(); j++)
+        // {
+        //   Serial.print(currentMessage->get(i).options->get(j).option + " " + currentMessage->get(i).options->get(j).value);
+        // }
+        Serial.println();
+      }
+    }
+    else
+    {
+      Serial.println("INFO: currentMessages is NULL");
     }
 #endif
 
-    if (currentMessage->size() != 0)
+    if (currentMessage != NULL)
     {
-      for (int i = 0; i < currentMessage->size(); i++)
+      if (currentMessage->size() != 0)
       {
-        if (currentMessage->get(i).root.equals(CMD_LED))
-        {
-          if (currentMessage->get(i).command.equals(FILL_ARG))
-          {
-            system_status = 1; //filled with color
-          }
-          if (currentMessage->get(i).command.equals(RAINBOW_ARG))
-          {
-            system_status = 2; //playing rainbow
-          }
-        }
+        lastMessages = currentMessage;
+        //system_status = lastMessages->get(0).systemStatus; //this may be a problem point when more then 1 message to work with
       }
-      lastMessages = currentMessage;
     }
 
     bot_lasttime = millis();
-    Serial.println("------------------------------");
     Serial.println("FreeRAM: " + String(ESP.getFreeHeap()));
+    Serial.println("------------------------------");
   }
 
-  switch (system_status)
+  if (lastMessages != NULL)
   {
-  case 1:
-  {
-    leds.color(Utils::hexToDec(Utils::getNamedOptionValue(lastMessages->get(0).options, COLOR_ARG))); //this may be a problem point when more then 1 message to work with
-    break;
-  }
-  case 2:
-  {
-    leds.rainbow();
-    break;
-  }
 
-  default:
-    break;
+    switch (lastMessages->get(0).systemStatus) //this may be a problem point when more then 1 message to work with
+    {
+    case 1:
+    {
+      leds.color(Utils::hexToDec(Utils::getNamedOptionValue(lastMessages->get(0).options, COLOR_ARG))); //this may be a problem point when more then 1 message to work with
+      break;
+    }
+    case 2:
+    {
+      leds.rainbow();
+      break;
+    }
+
+    default:
+      break;
+    }
+  }
+  else
+  {
+#if DEBUG_MODE == 1
+    //Serial.println("lastMessages is NULL");
+#endif
   }
 
   // delete(myMessages);
