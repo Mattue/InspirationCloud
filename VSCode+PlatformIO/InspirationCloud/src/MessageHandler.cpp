@@ -10,9 +10,9 @@ MessageHandler::MessageHandler()
 {
     bot.waitForResponse = 500;
 
-    cmdStart = cli.addCmd("/start");
+    cmdStart = cli.addCmd(CMD_START);
 
-    cmdHelp = cli.addCmd("/help");
+    cmdHelp = cli.addCmd(CMD_HELP);
 
     cmdLed = cli.addCmd(CMD_LED);
 
@@ -181,7 +181,7 @@ LinkedList<ParsedMessage> *MessageHandler::handleMessages()
             }
             else
             {
-                bot.sendMessage(chat_id, "Unknown command.\nRun /start or /help to get list of valid commands.", DEFAULT_PARSE_MODE);
+                bot.sendMessage(chat_id, "Unknown command.\nRun " + String(CMD_START) + " or " + String(CMD_HELP) + " to get list of valid commands.", DEFAULT_PARSE_MODE);
                 return NULL; //TODO: delete parsedMessages
             }
 
@@ -210,8 +210,8 @@ String MessageHandler::buildMenu(telegramMessage currentMessage)
     welcome += "Welcome to Inspiration cloud.\n";
     welcome += "\n\n";
     welcome += String(CMD_LED) + " : for led commands\n";
-    welcome += "/status : Returns current status of inspiration cloud\n";
-    welcome += "/start or /help : to show this menu";
+    //welcome += "/status : Returns current status of inspiration cloud\n";
+    welcome += String(CMD_START) + " or " + String(CMD_HELP) + " : to show this menu";
 
     return welcome;
 }

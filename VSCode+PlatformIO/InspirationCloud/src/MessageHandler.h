@@ -11,7 +11,9 @@
 
 #define DEFAULT_PARSE_MODE "Markdown"
 
+#define CMD_START "/start"
 #define CMD_LED "/led"
+#define CMD_HELP "/help"
 
 #define HELP_ARG "help"
 #define FILL_ARG "fill"
