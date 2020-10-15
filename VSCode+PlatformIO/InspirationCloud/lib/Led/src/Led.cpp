@@ -3,7 +3,7 @@
 Led::Led()
 {
 
-  FastLED.setMaxPowerInVoltsAndMilliamps(5, 1500);
+  FastLED.setMaxPowerInVoltsAndMilliamps(4, 1000);
 
   //LED strips init
   FastLED.addLeds<WS2812B, PIN1, GRB>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);

@@ -9,8 +9,8 @@
 #include <FastLED.h>
 #include <utils\LedUtils.h>
 
-//#define NUM_LEDS 73
-#define NUM_LEDS 35
+#define NUM_LEDS 73
+// #define NUM_LEDS 35
 #define PIN1 12
 #define PIN2 13
 #define PIN3 15

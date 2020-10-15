@@ -21,8 +21,11 @@ void Utils::deleteParsedMessageList(LinkedList<ParsedMessage> *linkedList)
     {
       for (int i = 0; i < linkedList->size(); i++)
       {
-        linkedList->get(i).options->clear();
+        //double of Utils::deleteParsedMessage(ParsedMessage *parsedMessage), but can't solve Error: taking address of temporary [-fpermissive]
+        if(linkedList->get(i).options != NULL) {
+          linkedList->get(i).options->clear();
         delete (linkedList->get(i).options);
+        }
       }
       linkedList->clear();
     }
