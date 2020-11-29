@@ -10,17 +10,16 @@ Led::Led()
   FastLED.addLeds<WS2812B, PIN2, GRB>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   FastLED.addLeds<WS2812B, PIN3, GRB>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
 
-  for (int i = 0; i < NUM_LEDS; i++)
-  {
-    leds[i] = CRGB::Black;
-  }
+  Led::switchOff();
 
   FastLED.setBrightness(70);
 }
 
-void Led::setColorByPercent(int percent) {
+void Led::setColorByPercent(int percent)
+{
   int ledsToFill = ((NUM_LEDS * percent) / 100);
-  for(int i = 0; i < ledsToFill; i++) {
+  for (int i = 0; i < ledsToFill; i++)
+  {
     leds[i] = CRGB::Green;
   }
   FastLED.show();
@@ -34,24 +33,20 @@ void Led::switchOff()
 
 void Led::rainbow()
 {
-  if (millis() > lastMillis + RAINBOW_SPEED)
+  for (int i = 0; i < NUM_LEDS; i++)
   {
-    for (int i = 0; i < NUM_LEDS; i++)
-    {                                            // от 0 до первой трети
-      leds[i] = CHSV(counter + i * 2, 255, 255); // HSV. Увеличивать HUE (цвет)
-      // умножение i уменьшает шаг радуги
-    }
-    counter++; // counter меняется от 0 до 255 (тип данных byte)
-    FastLED.show();
-    lastMillis = millis();
+    //TODO: make is smooth
+    leds[i] = CHSV(counter + i * 2, 255, 255); // HSV. Увеличивать HUE (цвет)
   }
+  counter++; // counter меняется от 0 до 255 (тип данных byte)
+  FastLED.show();
 }
 
 void Led::color(CRGB::HTMLColorCode color)
 {
 
 #if DEBUG_MODE == 1
-  // Serial.println("DEBUG: Filling with " + String(color));
+  Serial.println("DEBUG: Filling with " + String(color));
 #endif
 
   for (int i = 0; i < NUM_LEDS; i++)
@@ -62,7 +57,8 @@ void Led::color(CRGB::HTMLColorCode color)
   FastLED.show();
 }
 
-void Led::color(unsigned int color) {
+void Led::color(unsigned int color)
+{
   for (int i = 0; i < NUM_LEDS; i++)
   {
     leds[i] = color;
@@ -79,9 +75,12 @@ void Led::color(String color)
 
   color.toUpperCase();
 
-  if(color.startsWith("#")) {
+  if (color.startsWith("#"))
+  {
     this->color(LedUtils::hexToDec(color));
-  } else {
+  }
+  else
+  {
     this->color(LedUtils::colorToHex(color));
   }
 }

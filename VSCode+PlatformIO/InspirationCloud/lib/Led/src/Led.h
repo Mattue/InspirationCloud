@@ -10,19 +10,20 @@
 #include <utils\LedUtils.h>
 
 #define NUM_LEDS 73
-// #define NUM_LEDS 35
 #define PIN1 12
 #define PIN2 13
 #define PIN3 15
 
-#define RAINBOW_SPEED 5 //rainbow speed
+#ifndef RAINBOW_SPEED
+#define RAINBOW_SPEED 500 //rainbow speed in ms
+#endif
 
 class Led
 {
 public:
     Led();
     void switchOff();
-    void rainbow();
+    void ICACHE_RAM_ATTR rainbow();
     void color(CRGB::HTMLColorCode color);
     void color(String color);
     void color(unsigned int color);

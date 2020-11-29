@@ -8,10 +8,16 @@
 #include <ArduinoOTA.h>
 #include <Led.h>
 #include <MessageHandler.h>
-#include <structures\ParsedMessage.h>
+#include <Ticker.h>
 #include <LinkedList.h>
+#include <structures\ParsedMessage.h>
+// #include <structures\Status.h>
 #include <utils\Utils.h>
-#include <ArduSlack.h>
+// #include <ArduSlack.h>
+
+#ifndef TELEGRAM_DEBUG
+#define TELEGRAM_DEBUG 1
+#endif
 
 #ifndef DEBUG_MODE
 #define DEBUG_MODE 0
@@ -42,8 +48,7 @@
 #endif
 
 //https://github.com/esp8266/Arduino/issues/1032#issuecomment-285314332
-#ifdef SSID_MODE
-
+#ifdef SSID_MODE //1 - WPA2-Enterprize, 0 - WPA2-Personal
 #if SSID_MODE == 1
 extern "C"
 {
@@ -58,25 +63,30 @@ extern "C"
 #endif
 #endif
 
-#ifndef BOT_MTBS
+#ifndef BOT_MTBS //bot refresh speed in ms
 #define BOT_MTBS = 1000
 #endif
 
 unsigned long lastMillis = millis(); // last time messages' scan has been done
 
-Led leds;     //LED's controller
-byte counter; //counter for LED animations
+Led leds; //LED's controller
+
+Ticker rainbowTicker; //rainbow interruption
 
 MessageHandler messageHandler;
 
-int system_status = 0; //idle. Full list find in MessageHandler.cpp
+bool runCommand = true; //true if there is commant to run, false otherwise
+
+LinkedList<ParsedMessage> *lastMessages = NULL; //holds last message from bot
+
+// Status currentStatus;
 
 void setup()
 {
   // initialize the Serial
   Serial.begin(115200);
 
-#if SSID_MODE == 0
+#if SSID_MODE == 0 //WPA2-Personal //TODO: rework to ifndef
 // connect the ESP8266 to the desired access point
 #if DEBUG_MODE == 1
   Serial.println("\nINFO: Connecting to WiFi: " + String(SSID_NAME));
@@ -89,6 +99,8 @@ void setup()
 
   if (WiFi.waitForConnectResult() == WL_CONNECTED)
   {
+    // currentStatus.ip = WiFi.localIP().toString();
+
 #if DEBUG_MODE == 1
     IPAddress ip = WiFi.localIP();
     Serial.println("INFO: Connected to WiFi. IP address: " + ip.toString());
@@ -104,56 +116,97 @@ void setup()
   }
 #else
 //connect the ESP8266 to wpa2-enterprise
+//TODO: cert must be applied here
 #if DEBUG_MODE == 1
   Serial.print("INFO: Connecting to WiFi: ");
   Serial.println(SSID_NAME);
 #endif
+
+  static const char *ssid = SSID_NAME;
+  // Username for authentification
+  static const char *username = SSID_USERNAME;
+  // Password for authentication
+  static const char *password = SSID_PASSWORD;
+
+  Serial.println(ssid);
+  Serial.println(username);
+  Serial.println(password);
+
   wifi_set_opmode(STATION_MODE);
-
   struct station_config wifi_config;
-
   memset(&wifi_config, 0, sizeof(wifi_config));
-  strcpy((char *)wifi_config.ssid, (char *)SSID_NAME);
-
+  strcpy((char *)wifi_config.ssid, ssid);
   wifi_station_set_config(&wifi_config);
-
   wifi_station_clear_cert_key();
   wifi_station_clear_enterprise_ca_cert();
-
   wifi_station_set_wpa2_enterprise_auth(1);
-  wifi_station_set_enterprise_username((uint8 *)SSID_USERNAME, strlen(SSID_USERNAME));
-  wifi_station_set_enterprise_password((uint8 *)SSID_PASSWORD, strlen(SSID_PASSWORD));
-
+  wifi_station_set_enterprise_identity((uint8 *)username, strlen(username));
+  wifi_station_set_enterprise_username((uint8 *)username, strlen(username));
+  wifi_station_set_enterprise_password((uint8 *)password, strlen(password));
   wifi_station_connect();
 
-#if DEBUG_MODE == 1
-  // Wait for connection AND IP address from DHCP
   while (WiFi.status() != WL_CONNECTED)
   {
-    if (millis > lastMillis + 500)
-    {
-      Serial.print(".");
-      lastMillis = millis();
-    }
+    delay(500);
+    Serial.print(".");
   }
 
-  IPAddress ip = WiFi.localIP();
-  Serial.print("INFO: Connected to WiFi. IP address: ");
-  Serial.println(ip);
-#endif
+  Serial.println("Done");
+
+  //   disable_extra4k_at_link_time();
+
+  //   wifi_set_opmode(STATION_MODE);
+
+  //   struct station_config wifi_config;
+
+  //   memset(&wifi_config, 0, sizeof(wifi_config));
+  //   strcpy((char *)wifi_config.ssid, (char *)SSID_NAME);
+
+  //   wifi_station_set_config(&wifi_config);
+
+  //   wifi_station_clear_cert_key();
+  //   wifi_station_clear_enterprise_ca_cert();
+
+  //   wifi_station_set_wpa2_enterprise_auth(1);
+  //   wifi_station_set_enterprise_identity((uint8 *)SSID_USERNAME, strlen(SSID_USERNAME));
+  //   wifi_station_set_enterprise_username((uint8 *)SSID_USERNAME, strlen(SSID_USERNAME));
+  //   wifi_station_set_enterprise_password((uint8 *)SSID_PASSWORD, strlen(SSID_PASSWORD));
+
+  //   wifi_station_connect();
+
+  //   // Wait for connection AND IP address from DHCP
+  //   while (WiFi.status() != WL_CONNECTED)
+  //   {
+  // #if DEBUG_MODE == 1
+  //     // if (millis() > lastMillis + 500)
+  //     // {
+  //     //   Serial.print(".");
+  //     //   lastMillis = millis();
+  //     // }
+  //     // delay(500);
+  //     // Serial.println(WiFi.status());
+  // #endif
+  //   }
+
+  // #if DEBUG_MODE == 1
+  //   IPAddress ip = WiFi.localIP();
+  //   Serial.print("INFO: Connected to WiFi. IP address: ");
+  //   Serial.println(ip);
+  // #endif
+
 #endif
 
   //Wireles firmare upload init
   ArduinoOTA.setRebootOnSuccess(true);
   ArduinoOTA.onStart([]() {
-    Serial.println("INFO: Start of OTA update"); //  "Начало OTA-апдейта"
-    
+    Serial.println("\nINFO: Start of OTA update"); //  "Begin of OTA-update"
+    rainbowTicker.detach();
+
     leds.color("Yellow");
     delay(1000);
-
   });
   ArduinoOTA.onEnd([]() {
-    Serial.println("\nINFO: End of OTA update"); //  "Завершение OTA-апдейта"
+    Serial.println("\nINFO: End of OTA update"); //  "End of OTA-update"
     delay(2000);
     leds.switchOff();
   });
@@ -161,32 +214,31 @@ void setup()
     leds.setColorByPercent((progress / (total / 100)));
   });
   ArduinoOTA.onError([](ota_error_t error) {
-    
     leds.color("Red");
     delay(1000);
 
     Serial.printf("ERROR: Error[%u]: ", error);
-    if (error == OTA_AUTH_ERROR) //  "Ошибка при аутентификации"
+    if (error == OTA_AUTH_ERROR) //  "Authentication error"
     {
       Serial.println("Auth Failed");
       //TODO: do LED notification
     }
-    else if (error == OTA_BEGIN_ERROR) //  "Ошибка при начале OTA-апдейта"
+    else if (error == OTA_BEGIN_ERROR) //  "Error in begin of OTA-update"
     {
       Serial.println("Begin Failed");
       //TODO: do LED notification
     }
-    else if (error == OTA_CONNECT_ERROR) //  "Ошибка при подключении"
+    else if (error == OTA_CONNECT_ERROR) //  "Connection error"
     {
       Serial.println("Connect Failed");
       //TODO: do LED notification
     }
-    else if (error == OTA_RECEIVE_ERROR) //  "Ошибка при получении данных"
+    else if (error == OTA_RECEIVE_ERROR) //  "Data receive error"
     {
       Serial.println("Receive Failed");
       //TODO: do LED notification
     }
-    else if (error == OTA_END_ERROR) //  "Ошибка при завершении OTA-апдейта"
+    else if (error == OTA_END_ERROR) //  "Error in end of OTA-update"
     {
       Serial.println("End Failed");
       //TODO: do LED notification
@@ -194,10 +246,15 @@ void setup()
   });
   ArduinoOTA.begin();
 
+  // currentStatus.status = 0;
+
   pinMode(LED_BUILTIN, OUTPUT);
 }
 
-LinkedList<ParsedMessage> *lastMessages = NULL;
+void rainbowCallBack()
+{ //TODO: think about Lambda function
+  leds.rainbow();
+}
 
 void loop()
 {
@@ -240,6 +297,8 @@ void loop()
         Serial.println();
       }
 #endif
+
+      runCommand = true;
     }
     else
     {
@@ -256,8 +315,9 @@ void loop()
 #endif
   }
 
-  if (lastMessages != NULL)
+  if (lastMessages != NULL && runCommand)
   {
+    rainbowTicker.detach();
     switch (lastMessages->get(0).systemStatus) //this may be a problem point when more then 1 message to work with
     {
     case 0:
@@ -272,12 +332,14 @@ void loop()
     }
     case 2:
     {
-      leds.rainbow();
+      rainbowTicker.attach_ms((uint32_t) (RAINBOW_SPEED), rainbowCallBack);
       break;
     }
 
     default:
       break;
     }
+
+    runCommand = false;
   }
 }
