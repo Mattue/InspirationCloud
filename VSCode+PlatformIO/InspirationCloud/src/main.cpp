@@ -16,7 +16,7 @@
 // #include <ArduSlack.h>
 
 #ifndef TELEGRAM_DEBUG
-#define TELEGRAM_DEBUG 1
+#define TELEGRAM_DEBUG 0
 #endif
 
 #ifndef DEBUG_MODE
