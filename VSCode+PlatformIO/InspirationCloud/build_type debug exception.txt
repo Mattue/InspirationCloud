@@ -1,0 +1,223 @@
+------------------------------
+INFO: Checking for updates
+GET Update Messages
+[BOT]Connecting to server
+
+--------------- CUT HERE FOR EXCEPTION DECODER ---------------
+
+Soft WDT reset
+
+>>>stack>>>
+
+ctx: sys
+sp: 3ffff6f0 end: 3fffffb0 offset: 01a0
+3ffff890:  01c0566e 00000000 3fff83b8 40217719  
+3ffff8a0:  00000000 00000000 3fff7f04 00000001  
+3ffff8b0:  0003de4e 3ffeef2c 00000004 40211848
+3ffff8c0:  00003a98 00017aa1 58c72000 000000dd
+3ffff8d0:  00000008 40238278 3fff7f04 40237d86
+3ffff8e0:  3fff8404 3ffe8c60 3fff7f04 3ffef4d4
+3ffff8f0:  00000001 00000000 3ffeef2c 40211b20
+3ffff900:  3ffeef2c 3ffe8c60 00000001 40211eaa  
+3ffff910:  3ffee910 3ffef534 00000001 00000001
+3ffff920:  3fff65bc 00000000 3fff246c 00000000
+3ffff930:  3fff7f04 00000000 3fff238c 40217d3a
+3ffff940:  00000000 3ffeef2c 3fff7bd4 402103f2
+3ffff950:  000001bb 3ffef394 3ffe8ff8 3ffef4d4
+3ffff960:  000001bb 3ffeef2c 3ffe8c60 3ffef4d4
+3ffff970:  000001bb 3ffeef2c 3ffe8c60 40211fcd
+3ffff980:  402206c8 dca79a95 402206c8 dca79a95
+3ffff990:  3ffffaec 3ffffae0 3ffeeff8 4020530a
+3ffff9a0:  3fffdad0 2b8d863b 3ffffaec 40216d00
+3ffff9b0:  36300031 80323539 3ffe0037 3ffef4d4
+3ffff9c0:  3fffdad0 2b8d863b 3ffeeff8 4020c855
+3ffff9d0:  4000050c 3ffffc44 00000001 4020b3e9
+3ffff9e0:  003083d5 00000030 00000018 ffffffff
+3ffff9f0:  4021897c 007f8000 00000000 00000000
+3ffffa00:  3ffffad0 3ffffac0 0000000c 3ffe8300
+3ffffa10:  00000001 00000009 00000001 67617373
+3ffffa20:  0000000e 3ffe8904 00000000 3ffef4d4
+3ffffa30:  3fffdad0 00000000 3ffffd08 40223184
+3ffffa40:  3ffffaf1 3ffffad0 7ffffffe ffff0208
+3ffffa50:  3ffffaf0 7fffffff 3fff6dd8 3ffffab8
+3ffffa60:  3fff6dd8 3ffffab8 3fff6dd8 3ffffab8
+3ffffa70:  3fff6dd8 0000050f 0000050f 4010098f  
+3ffffa80:  3fff77dc 0000042e 0000042e 3ffef4d4
+3ffffa90:  3fffdad0 00000020 3fff238c 40100c54
+3ffffaa0:  3fff77dc 3fff7900 0012001f 802285ad
+3ffffab0:  00000008 00000000 3fff238c 40204e0e
+3ffffac0:  00000002 3fff6df8 3ffffd08 402165c5
+3ffffad0:  00000001 3ffffd08 3ffffaf0 3ffef4d4
+3ffffae0:  40214e00 3ffef394 80fe8ff8 3fff7b2c
+3ffffaf0:  0054005f 03fef394 3ffe8ff8 402154cd
+3ffffb00:  3fffdad0 00000020 0000001c 40100c8f
+3ffffb10:  00000005 00000000 00000020 3ffef4d4
+3ffffb20:  3fffdad0 00000000 3ffe8514 40203017
+3ffffb30:  3ffe9605 40104b77 3ffecff0 4010263c
+3ffffb40:  4010245b 3ffecff0 00000020 40100328
+3ffffb50:  ffffffc2 05c4e74b 3ffeda9c 4010263c
+3ffffb60:  3ffe9e80 00000000 00000000 00000001
+3ffffb70:  ffffffc2 05c4e74b 40102afe 00000100
+3ffffb80:  3ffe9e80 7fffffff 00002200 00000001
+3ffffb90:  00000001 00000080 00000000 4010541d
+3ffffba0:  3ffe9e80 00000000 0000001f 05c4e74b
+3ffffbb0:  3ffe9ea4 2c9f0300 4000050c 3fffc278
+3ffffbc0:  40102820 3fffc200 00000022 00000000
+3ffffbd0:  4000dcf0 00000030 00000010 ffffffff
+3ffffbe0:  4000066d 00000000 4bc6a7f0 4bc6a7f0
+3ffffbf0:  00000000 35d8218f 00000000 fffffffe
+3ffffc00:  00000000 00000000 0000001f 40100328
+3ffffc10:  4bc6a7f0 378d4fdf 3fffc228 4010541d
+3ffffc20:  4000050c a0159d48 00000000 fffffffe
+3ffffc30:  4021ac6c 00000030 00000010 ffffffff
+3ffffc40:  4021ac6c 00017a42 00418937 00000000
+3ffffc50:  00004bc6 00000000 00000000 fffffffe
+3ffffc60:  00000000 3fffc6fc 00000000 3fff21c4
+3ffffc70:  00000000 00000001 00000001 00000030
+3ffffc80:  40219d5a 00000030 3fffc228 4010541d
+3ffffc90:  4000050c 00000001 00000001 00000000
+3ffffca0:  402049ea 00000030 00000010 ffffffff
+3ffffcb0:  402046e1 3ffe84dc 3fff77bc 000001f4
+3ffffcc0:  00000000 4bc6a7f0 020c49ba 00000000
+3ffffcd0:  00000000 00000000 4bc6a7f0 00000000
+3ffffce0:  00000000 3fffdad0 40100422 00017a4c
+3ffffcf0:  00000000 00000001 3ffffd4c 3ffef23c
+3ffffd00:  01b567e2 3ffeef14 00000000 40202098
+3ffffd10:  80f0b0ff 3ffef394 3ffe8ff8 00000001
+3ffffd20:  00000001 00000000 3fff21c4 4021ac6c
+3ffffd30:  00000002 4bc6a7f0 03958106 00000000
+3ffffd40:  0000001a 00000000 4bc6a7f0 3ffef4d4
+3ffffd50:  40214e00 3ffef394 3ffe8ff8 40214e0c
+3ffffd60:  3ffeef2c 3ffef394 3ffe8ff8 402154cd
+3ffffd70:  3fffdad0 0000001a 3ffeeff8 402154ec
+3ffffd80:  3fffdad0 00000000 3ffef394 3ffef4d4
+3ffffd90:  3fffdad0 00000000 3ffe8514 40204700
+3ffffda0:  00000005 00000000 00000020 40100328
+3ffffdb0:  0000005c 00000001 00000005 401018c0
+3ffffdc0:  00000002 00000000 00000020 40100328
+3ffffdd0:  40101cf1 3ffecff0 00000002 401018c0
+3ffffde0:  00000005 00000000 00000020 40100328
+3ffffdf0:  00000001 40103d3a 00000005 401018c0
+3ffffe00:  3ffe9605 40104b77 3ffed018 00000100
+3ffffe10:  4010245b 3ffed018 30313800 00000034
+3ffffe20:  00000000 00000000 0000001f 40100328
+3ffffe30:  3ffe9e80 00000000 3fffc228 4010541d
+3ffffe40:  4000050c 05bed390 40102afe 00000100
+3ffffe50:  00000000 00000000 0000001f 40100328
+3ffffe60:  4021776c 00000000 3fffc228 4010541d
+3ffffe70:  4000050c 00000000 00000000 fffffffe
+3ffffe80:  40000f83 00000030 00000010 ffffffff
+3ffffe90:  40000ea3 00000023 00000001 00000001
+3ffffea0:  3fffdab0 00000000 3fffd9d0 3ffef4d4
+3ffffeb0:  00000000 00000000 00000001 00000020
+3ffffec0:  00000000 3fffdad0 3ffef4d4 00000030
+3ffffed0:  00000210 3fffc6fc 00000000 3ffe8514
+3ffffee0:  00000000 3fffdad0 3ffef4d4 00000030
+3ffffef0:  00000000 3fffdad0 3ffef4d4 00000030
+3fffff00:  00000000 3fffdad0 3ffef4d4 00000030
+3fffff10:  00776f00 80fe8b10 6c6c6900 20770020
+3fffff20:  80ff0100 64656c00 40204100 80204364  
+3fffff30:  6c6c6900 00776f00 80204168 3fff7b94
+3fffff40:  00000001 64656c00 40204100 802042f0
+3fffff50:  007a1200 d1ff0760 80200000 40200000
+3fffff60:  007a1200 d1ff0728 3fff1f00 001e001f
+3fffff70:  00000000 80efeffe 3fff1c00 0016001f
+3fffff80:  00000000 00000000 00000001 40100328
+3fffff90:  3fffdad0 00000000 3ffe8514 3ffef4d4
+3fffffa0:  3fffdad0 00000000 3ffe8514 4021779b
+<<<stack<<<
+
+0x40217719 in optimistic_yield at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/core_esp8266_main.cpp:146 (discriminator 1)
+0x40211848 in BearSSL::WiFiClientSecure::_run_until(unsigned int, bool) at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiClientSecureBearSSL.cpp:453
+0x40238278 in pgm_read_word_inlined at /home/earle/Arduino/hardware/esp8266com/esp8266/tools/xtensa-lx106-elf/xtensa-lx106-elf/include/sys/pgmspace.h:77
+ (inlined by) br_ssl_hs_client_init_main at /home/earle/Arduino/hardware/esp8266com/esp8266/tools/sdk/ssl/bearssl/src/ssl/ssl_hs_client.c:904
+0x40237d86 in br_ssl_engine_hs_reset at /home/earle/Arduino/hardware/esp8266com/esp8266/tools/sdk/ssl/bearssl/src/ssl/ssl_engine.c:1320
+0x40211b20 in BearSSL::WiFiClientSecure::_wait_for_handshake() at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiClientSecureBearSSL.cpp:564
+0x40211eaa in BearSSL::WiFiClientSecure::_connectSSL(char const*) at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiClientSecureBearSSL.cpp:1122
+0x40217d3a in __delay at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/core_esp8266_wiring.cpp:54
+0x402103f2 in WiFiClient::connect(IPAddress, unsigned short) at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/include/ClientContext.h:144
+ (inlined by) WiFiClient::connect(IPAddress, unsigned short) at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiClient.cpp:170
+0x40211fcd in BearSSL::WiFiClientSecure::connect(char const*, unsigned short) at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src/WiFiClientSecureBearSSL.cpp:232
+0x402206c8 in esp8266::MDNSImplementation::MDNSResponder::stcMDNSSendParameter::findCachedDomainOffset(void const*, bool) const at ??:?
+0x402206c8 in esp8266::MDNSImplementation::MDNSResponder::stcMDNSSendParameter::findCachedDomainOffset(void const*, bool) const at ??:?
+0x4020530a in UniversalTelegramBot::sendGetToTelegram(String const&) at .pio\libdeps\nodemcuv2\UniversalTelegramBot\src/UniversalTelegramBot.cpp:73
+0x40216d00 in String::concat(String const&) at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/WString.h:301
+ (inlined by) String::concat(String const&) at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/WString.cpp:317
+0x4020c855 in UniversalTelegramBot::getUpdates(long) at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/WString.h:191
+ (inlined by) UniversalTelegramBot::getUpdates(long) at .pio\libdeps\nodemcuv2\UniversalTelegramBot\src/UniversalTelegramBot.cpp:371
+0x4020b3e9 in UniversalTelegramBot::sendMessage(String const&, String const&, String const&, int) at .pio\libdeps\nodemcuv2\UniversalTelegramBot\src/UniversalTelegramBot.cpp:576
+0x4021897c in uart_write at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/uart.cpp:508
+0x40223184 in sprintf at /home/earle/src/esp-quick-toolchain/repo/newlib/newlib/libc/stdio/sprintf.c:646
+0x4010098f in umm_free_core at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266\umm_malloc/umm_malloc.cpp:351
+0x40100c54 in free at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266\umm_malloc/umm_malloc.cpp:398
+0x40204e0e in Utils::deleteParsedMessageList(LinkedList<ParsedMessage>*) at src\utils/Utils.cpp:34
+0x402165c5 in String::copy(char const*, unsigned int) at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/WString.cpp:214
+0x40214e00 in HardwareSerial::write(unsigned char const*, unsigned int) at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/HardwareSerial.h:162
+0x402154cd in Print::print(char const*) at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/Print.cpp:130
+0x40100c8f in malloc at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266\umm_malloc/umm_malloc.cpp:552
+0x40203017 in MessageHandler::handleMessages() at src/MessageHandler.cpp:74
+0x40104b77 in lmacRxDone at ??:?
+0x4010263c in rcReachRetryLimit at ??:?
+0x4010245b in rcReachRetryLimit at ??:?
+0x40100328 in ets_post at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/core_esp8266_main.cpp:177
+0x4010263c in rcReachRetryLimit at ??:?
+0x40102afe in wDev_ProcessFiq at ??:?
+0x4010541d in ets_timer_disarm at ??:?
+0x40102820 in wDev_ProcessFiq at ??:?
+0x40100328 in ets_post at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/core_esp8266_main.cpp:177
+0x4010541d in ets_timer_disarm at ??:?
+0x4021ac6c in esp8266::MDNSImplementation::MDNSResponder::_updateProbeStatus() at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/PolledTimeout.h:218
+ (inlined by) ?? at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/PolledTimeout.h:243
+ (inlined by) ?? at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/PolledTimeout.h:162
+ (inlined by) esp8266::MDNSImplementation::MDNSResponder::_updateProbeStatus() at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266mDNS\src/LEAmDNS_Control.cpp:1322
+0x4021ac6c in esp8266::MDNSImplementation::MDNSResponder::_updateProbeStatus() at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/PolledTimeout.h:218
+ (inlined by) ?? at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/PolledTimeout.h:243
+ (inlined by) ?? at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/PolledTimeout.h:162
+ (inlined by) esp8266::MDNSImplementation::MDNSResponder::_updateProbeStatus() at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266mDNS\src/LEAmDNS_Control.cpp:1322
+0x40219d5a in esp8266::MDNSImplementation::MDNSResponder::update() at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266mDNS\src/LEAmDNS.cpp:1337
+0x4010541d in ets_timer_disarm at ??:?
+0x402049ea in loop at src/main.cpp:317 (discriminator 1)
+0x402046e1 in loop at src/main.cpp:262
+0x40100422 in millis at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/core_esp8266_wiring.cpp:188 (discriminator 3)
+0x40202098 in CFastLED::show(unsigned char) at .pio\libdeps\nodemcuv2\FastLED/FastLED.cpp:64
+0x4021ac6c in esp8266::MDNSImplementation::MDNSResponder::_updateProbeStatus() at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/PolledTimeout.h:218
+ (inlined by) ?? at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/PolledTimeout.h:243
+ (inlined by) ?? at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/PolledTimeout.h:162
+ (inlined by) esp8266::MDNSImplementation::MDNSResponder::_updateProbeStatus() at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266mDNS\src/LEAmDNS_Control.cpp:1322
+0x40214e00 in HardwareSerial::write(unsigned char const*, unsigned int) at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/HardwareSerial.h:162
+0x40214e0c in HardwareSerial::write(unsigned char const*, unsigned int) at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/HardwareSerial.h:165
+0x402154cd in Print::print(char const*) at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/Print.cpp:130
+0x402154ec in Print::println() at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/Print.cpp:186
+0x40204700 in loop at src/main.cpp:271
+0x40100328 in ets_post at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/core_esp8266_main.cpp:177
+0x401018c0 in pp_post at ??:?
+0x40100328 in ets_post at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/core_esp8266_main.cpp:177
+0x40101cf1 in rcUpdateTxDone at ??:?
+0x401018c0 in pp_post at ??:?
+0x40100328 in ets_post at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/core_esp8266_main.cpp:177
+0x40103d3a in lmacRecycleMPDU at ??:?
+0x401018c0 in pp_post at ??:?
+0x40104b77 in lmacRxDone at ??:?
+0x4010245b in rcReachRetryLimit at ??:?
+0x40100328 in ets_post at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/core_esp8266_main.cpp:177
+0x4010541d in ets_timer_disarm at ??:?
+0x40102afe in wDev_ProcessFiq at ??:?
+0x40100328 in ets_post at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/core_esp8266_main.cpp:177
+0x4021776c in loop_end at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/core_esp8266_main.cpp:185
+0x4010541d in ets_timer_disarm at ??:?
+0x40204100 in std::_Function_base::_Base_manager<setup::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Function_base::_Base_manager<setup::{lambda()#1}> const&, std::_Manager_operation) at c:\users\mattue\.platformio\packages\toolchain-xtensa\xtensa-lx106-elf\include\c++\4.8.2/functional:1934
+0x40204100 in std::_Function_base::_Base_manager<setup::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Function_base::_Base_manager<setup::{lambda()#1}> const&, std::_Manager_operation) at c:\users\mattue\.platformio\packages\toolchain-xtensa\xtensa-lx106-elf\include\c++\4.8.2/functional:1934
+0x40100328 in ets_post at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/core_esp8266_main.cpp:177
+0x4021779b in loop_wrapper() at C:\users\mattue\.platformio\packages\framework-arduinoespressif8266\cores\esp8266/core_esp8266_main.cpp:197
+
+
+--------------- CUT HERE FOR EXCEPTION DECODER ---------------
+
+ ets Jan  8 2013,rst cause:2, boot mode:(3,7)
+
+load 0x4010f000, len 3584, room 16
+tail 0
+chksum 0xb0
+csum 0xb0
+v2843a5ac
+~ld
