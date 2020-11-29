@@ -16,7 +16,7 @@
 #define CMD_START "/start"
 #define CMD_LED "/led"
 #define CMD_HELP "/help"
-#define CDM_STATUS "/status" //TODO
+#define CDM_STATUS "/status"
 
 #define HELP_ARG "help"
 #define BLINK_ARG "blink" //TODO

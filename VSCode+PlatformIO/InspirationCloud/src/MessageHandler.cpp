@@ -1,11 +1,5 @@
 #include <MessageHandler.h>
 
-/*
-returning statuses:
-    0 - idle
-    1 - led runing operations
-*/
-
 MessageHandler::MessageHandler()
 {
     bot.waitForResponse = 500;
@@ -71,7 +65,6 @@ bool MessageHandler::isArgsNotSet(Command *cmd)
 
 LinkedList<ParsedMessage> *MessageHandler::handleMessages()
 {
-
     int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
 
 #if DEBUG_MODE == 1
@@ -143,6 +136,12 @@ LinkedList<ParsedMessage> *MessageHandler::handleMessages()
                 Utils::deleteParsedMessage(parsedMessage);
                 break;
             }
+            else if (c == cmdStatus) // /status is called
+            {
+                Utils::deleteParsedMessage(parsedMessage);
+                //TODO: get current status logic
+                break;
+            }
             else if (c == cmdLed) // /led is called
             {
                 if (c.getArg(HELP_ARG).isSet() || isArgsNotSet(&c)) // -help or no args is called
@@ -182,7 +181,7 @@ LinkedList<ParsedMessage> *MessageHandler::handleMessages()
                     parsedMessage->systemStatus = 2;
                     bot.sendMessage(chat_id, "RAINBOW!");
                 }
-                else if (c.getArg(STOP_ARG).isSet())
+                else if (c.getArg(STOP_ARG).isSet()) // -stop is called
                 {
                     parsedMessage->command = STOP_ARG;
                     parsedMessage->systemStatus = 0;
@@ -223,7 +222,7 @@ String MessageHandler::buildMenu(telegramMessage *currentMessage)
     welcome += "Welcome to Inspiration cloud.\n";
     welcome += "\n\n";
     welcome += String(CMD_LED) + " : for led commands\n";
-    //welcome += "/status : Returns current status of inspiration cloud\n";
+    welcome += String(CDM_STATUS) + " : Returns current status of inspiration cloud\n";
     welcome += String(CMD_START) + " or " + String(CMD_HELP) + " : to show this menu";
 
     return welcome;
