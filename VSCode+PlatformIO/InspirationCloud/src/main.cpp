@@ -11,7 +11,7 @@
 #include <Ticker.h>
 #include <LinkedList.h>
 #include <structures\ParsedMessage.h>
-// #include <structures\Status.h>
+#include <structures\Status.h>
 #include <utils\Utils.h>
 // #include <ArduSlack.h>
 
@@ -79,7 +79,7 @@ bool runCommand = true; //true if there is commant to run, false otherwise
 
 LinkedList<ParsedMessage> *lastMessages = NULL; //holds last message from bot
 
-// Status currentStatus;
+Status currentStatus;
 
 void setup()
 {
@@ -99,7 +99,7 @@ void setup()
 
   if (WiFi.waitForConnectResult() == WL_CONNECTED)
   {
-    // currentStatus.ip = WiFi.localIP().toString();
+    currentStatus.ip = WiFi.localIP().toString();
 
 #if DEBUG_MODE == 1
     IPAddress ip = WiFi.localIP();
@@ -246,14 +246,9 @@ void setup()
   });
   ArduinoOTA.begin();
 
-  // currentStatus.status = 0;
+  currentStatus.status = STATUS_IDLE;
 
   pinMode(LED_BUILTIN, OUTPUT);
-}
-
-void rainbowCallBack()
-{ //TODO: think about Lambda function
-  leds.rainbow();
 }
 
 void loop()
@@ -277,7 +272,6 @@ void loop()
       {
         Utils::deleteParsedMessageList(lastMessages);
         lastMessages = currentMessage;
-        //system_status = lastMessages->get(0).systemStatus; //this may be a problem point when more then 1 message to work with
       }
 
 #if DEBUG_MODE == 1
@@ -318,21 +312,32 @@ void loop()
   if (lastMessages != NULL && runCommand)
   {
     rainbowTicker.detach();
-    switch (lastMessages->get(0).systemStatus) //this may be a problem point when more then 1 message to work with
+    switch (lastMessages->get(0).systemStatus)
     {
-    case 0:
+    case STATUS_LED_SWITCH_OFF:
     {
       leds.switchOff();
+      currentStatus.status = STATUS_IDLE;
       break;
     }
-    case 1:
+    case STATUS_LED_FILL:
     {
       leds.color(Utils::getNamedOptionValue(lastMessages->get(0).options, COLOR_ARG));
+
+      currentStatus.status = STATUS_LED_FILL;
       break;
     }
-    case 2:
+    case STATUS_LED_RAINBOW:
     {
-      rainbowTicker.attach_ms((uint32_t) (RAINBOW_SPEED), rainbowCallBack);
+      rainbowTicker.attach_ms((uint32_t)RAINBOW_SPEED, []() { leds.rainbow(); });
+
+      currentStatus.status = STATUS_LED_RAINBOW;
+      break;
+    }
+    case STATUS_SYSTEM_STATUS:
+    {
+      messageHandler.sendStatusMessage(lastMessages->get(0), &currentStatus);
+
       break;
     }
 

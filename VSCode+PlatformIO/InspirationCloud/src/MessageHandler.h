@@ -7,9 +7,10 @@
 #include <ESP8266WiFi.h>
 #include <UniversalTelegramBot.h>
 #include <SimpleCLI.h>
-#include <structures\ParsedMessage.h>
 #include <LinkedList.h>
 #include <utils\Utils.h>
+#include <structures\Status.h>
+#include <structures\ParsedMessage.h>
 
 #define DEFAULT_PARSE_MODE "Markdown"
 
@@ -49,6 +50,8 @@ private:
 public:
     MessageHandler();
     LinkedList<ParsedMessage> *handleMessages();
+    void sendStatusMessage(ParsedMessage currentMessage, Status *systemStatus);
+    void sendMessage(String chatId, String message);
 };
 
 #endif

@@ -10,6 +10,8 @@ MessageHandler::MessageHandler()
 
     cmdLed = cli.addCmd(CMD_LED);
 
+    cmdStatus = cli.addCmd(CDM_STATUS);
+
     cmdLed.addFlagArg(BLINK_ARG);
     cmdLed.addFlagArg(FILL_ARG);
     cmdLed.addFlagArg(RAINBOW_ARG);
@@ -129,6 +131,7 @@ LinkedList<ParsedMessage> *MessageHandler::handleMessages()
 #endif
 
             parsedMessage->root = c.getName();
+            parsedMessage->chatId = chat_id;
 
             if (c == cmdStart || c == cmdHelp) // /start or /help is called
             {
@@ -138,9 +141,9 @@ LinkedList<ParsedMessage> *MessageHandler::handleMessages()
             }
             else if (c == cmdStatus) // /status is called
             {
-                Utils::deleteParsedMessage(parsedMessage);
-                //TODO: get current status logic
-                break;
+                parsedMessage->command = CDM_STATUS;
+                parsedMessage->systemStatus = STATUS_SYSTEM_STATUS;
+
             }
             else if (c == cmdLed) // /led is called
             {
@@ -154,6 +157,7 @@ LinkedList<ParsedMessage> *MessageHandler::handleMessages()
                 {
 
                     parsedMessage->command = FILL_ARG;
+                    parsedMessage->systemStatus = STATUS_SYSTEM_STATUS;
 
                     Argument fillColor = c.getArg(COLOR_ARG);
                     if (fillColor.getValue() != DEFAULT_CMD_VALUE)
@@ -164,7 +168,7 @@ LinkedList<ParsedMessage> *MessageHandler::handleMessages()
 
                         parsedMessage->options = new LinkedList<Option>();
                         parsedMessage->options->add(colorOption);
-                        parsedMessage->systemStatus = 1;
+                        parsedMessage->systemStatus = STATUS_LED_FILL;
 
                         bot.sendMessage(chat_id, "LED will be filled with " + fillColor.getValue() + " color", DEFAULT_PARSE_MODE);
                     }
@@ -178,13 +182,13 @@ LinkedList<ParsedMessage> *MessageHandler::handleMessages()
                 else if (c.getArg(RAINBOW_ARG).isSet()) // -rainbow is called
                 {
                     parsedMessage->command = RAINBOW_ARG;
-                    parsedMessage->systemStatus = 2;
+                    parsedMessage->systemStatus = STATUS_LED_RAINBOW;
                     bot.sendMessage(chat_id, "RAINBOW!");
                 }
                 else if (c.getArg(STOP_ARG).isSet()) // -stop is called
                 {
                     parsedMessage->command = STOP_ARG;
-                    parsedMessage->systemStatus = 0;
+                    parsedMessage->systemStatus = STATUS_LED_SWITCH_OFF;
                     bot.sendMessage(chat_id, "Switching LEDs off.");
                 }
             }
@@ -244,4 +248,18 @@ String MessageHandler::buildLedHelp()
     //ledHelp += "-count   integer number\n";
 
     return ledHelp;
+}
+
+void MessageHandler::sendStatusMessage(ParsedMessage currentMessage, Status *systemStatus)
+{
+    String statusMessage = "System status:\n";
+    statusMessage += "IP: " + systemStatus->ip + "\n";
+    statusMessage += "Status Id: " + String(systemStatus->status);
+
+    sendMessage(currentMessage.chatId, statusMessage);
+}
+
+void MessageHandler::sendMessage(String chatId, String message)
+{
+    bot.sendMessage(chatId, message, DEFAULT_PARSE_MODE);
 }
